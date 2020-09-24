@@ -1,37 +1,16 @@
-## Welcome to GitHub Pages
+# Welcome to my blog
 
-You can use the [editor on GitHub](https://github.com/Binsabbar/binsabbar.github.io/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+Hi, I occasionally write stuff that I found useful. You landed in this page, so I hope that you get something valuable out of it. :-) Enjoy !  
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+# Blogs
 
-### Markdown
+### CLI Tool for monitoring Gitlab Pipelines
+During covid-19 and lockdown, I wanted to utilise my time with something interesting. During my day, I needed to track multiple projects build status for over 50 projects. It was hard and time consuming. Sometimes I forget to check, the other time I lose track and focus on my main task. 
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+So I wanted something simple that I can glimpse at.I was using Gitlab, and did not provide a Dashboard that dispalyed all pipeline status. So I created a simple cli tool that will monitor and check projects that I am interested in. It is the simplest and fastest thing I could make in such a limited time, while getting value out of it. Also, some people enjoy cli based tools more.
 
-```markdown
-Syntax highlighted code block
+You can find the repo [here](https://github.com/Binsabbar/gitlab-cli-build-monitor)
 
-# Header 1
-## Header 2
-### Header 3
+### Feedback
 
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Binsabbar/binsabbar.github.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+I would love to hear from you. Please drop me a message at mo.opensource.projects@gmail.com
