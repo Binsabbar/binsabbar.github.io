@@ -1,3 +1,4 @@
+<!--- #intro --->
 _24/09/2020_
 
 ## CLI Tool for monitoring Gitlab Pipelines
@@ -6,6 +7,7 @@ _24/09/2020_
 ![Image](https://github.com/Binsabbar/gitlab-cli-build-monitor/blob/master/screenshot.png)
 
 During covid-19 and lockdown, I wanted to utilise my time with something interesting. During my day, I needed to track multiple projects build status for over 50 projects. It was hard and time consuming. Sometimes I forget to check, the other time I lose track and focus on my main task. 
+<!--- #intro --->
 
 So I wanted something simple that I can glimpse at.I was using Gitlab, and did not provide a Dashboard that dispalyed all pipeline status. So I created a simple cli tool that will monitor and check projects that I am interested in. It is the simplest and fastest thing I could make in such a limited time, while getting value out of it. Also, some people enjoy cli based tools more.
 
