@@ -63,7 +63,34 @@ title: Home
   <h2>Recent Articles</h2>
 
   <div class="blog-post">
-    {% include_relative articles/gitlab-cli-monitor.md %}
+    <p class="blog-date">24/09/2020</p>
+
+    <h3>CLI Tool for monitoring Gitlab Pipelines</h3>
+
+    <p><img src="https://raw.githubusercontent.com/Binsabbar/gitlab-cli-build-monitor/master/screenshot.png" alt="GitLab CLI Monitor Screenshot"></p>
+
+    <p>During covid-19 and lockdown, I wanted to utilise my time with something interesting. During my day, I needed to track multiple projects build status for over 50 projects. It was hard and time consuming. Sometimes I forget to check, the other time I lose track and focus on my main task.</p>
+
+    <p>So I wanted something simple that I can glimpse at. I was using Gitlab, and did not provide a Dashboard that displayed all pipeline status. So I created a simple cli tool that will monitor and check projects that I am interested in. It is the simplest and fastest thing I could make in such a limited time, while getting value out of it. Also, some people enjoy cli based tools more.</p>
+
+    <p>The tool is not very sophisticated, but yet simple enough to use and get value out of it.</p>
+
+    <p>The configuration is simple, all you need is a single <code>YAML</code> file that looks like that:</p>
+
+    <pre><code>baseUrl: https://gitlab.com
+accessToken: some-token-goes-here
+projects: # list of either ID number or full path to project
+- groupA/projectA
+- userA/projectB
+- groupA/projectB
+- groupA/projectV
+updateIntervals: 50 # in seconds</code></pre>
+
+    <p>The above will monitor the lists of projects and displays the status of each of them.</p>
+
+    <p>The project is still new and it has its own limitations such as: filtering branches or showing project that failed in the last X minutes. Feel free to contribute to it.</p>
+
+    <p>You can find the repo <a href="https://github.com/Binsabbar/gitlab-cli-build-monitor">here</a> with more details.</p>
   </div>
 </div>
 
