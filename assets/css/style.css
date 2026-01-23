@@ -1,0 +1,337 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+/* Claude Code inspired design with dark/light mode support */
+
+:root {
+  /* Light mode colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f6f8fa;
+  --bg-tertiary: #f0f2f5;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-accent: #2563eb;
+  --border-color: #e5e7eb;
+  --code-bg: #f6f8fa;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --highlight-bg: #dbeafe;
+  --success-color: #10b981;
+  --tag-bg: #e0e7ff;
+  --tag-text: #3730a3;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode colors */
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #1f2937;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-accent: #60a5fa;
+    --border-color: #30363d;
+    --code-bg: #161b22;
+    --shadow: rgba(0, 0, 0, 0.4);
+    --highlight-bg: #1e3a5f;
+    --success-color: #34d399;
+    --tag-bg: #1e293b;
+    --tag-text: #93c5fd;
+  }
+}
+
+/* Claude Code-style fonts */
+body {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono',
+               'Source Code Pro', 'Consolas', 'Courier New', monospace;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: 14px;
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Container */
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header/Hero Section */
+.hero {
+  text-align: center;
+  padding: 60px 20px 40px;
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  border-radius: 12px;
+  margin-bottom: 40px;
+  border: 1px solid var(--border-color);
+}
+
+.hero h1 {
+  font-size: 2.5em;
+  margin-bottom: 0.3em;
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.hero .tagline {
+  font-size: 1.2em;
+  color: var(--text-secondary);
+  margin-bottom: 1.5em;
+  font-weight: 400;
+}
+
+.hero .subtitle {
+  font-size: 1em;
+  color: var(--text-accent);
+  margin-bottom: 2em;
+  font-weight: 500;
+}
+
+/* Skills/Tags */
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.skill-tag {
+  background-color: var(--tag-bg);
+  color: var(--tag-text);
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 0.9em;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.skill-tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+/* Section Styling */
+.section {
+  margin-bottom: 50px;
+  padding: 30px;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.section h2 {
+  color: var(--text-primary);
+  font-size: 1.8em;
+  margin-bottom: 1em;
+  padding-bottom: 0.5em;
+  border-bottom: 2px solid var(--text-accent);
+  font-weight: 600;
+}
+
+.section h3 {
+  color: var(--text-primary);
+  font-size: 1.3em;
+  margin-top: 1.5em;
+  margin-bottom: 0.8em;
+  font-weight: 600;
+}
+
+/* Links */
+a {
+  color: var(--text-accent);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Code blocks */
+code {
+  background-color: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.95em;
+  border: 1px solid var(--border-color);
+  font-family: inherit;
+}
+
+pre {
+  background-color: var(--code-bg);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  border: none;
+}
+
+/* Contact/CTA Section */
+.cta {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: var(--highlight-bg);
+  border-radius: 8px;
+  margin-top: 40px;
+  border: 1px solid var(--border-color);
+}
+
+.cta h2 {
+  color: var(--text-primary);
+  margin-bottom: 0.8em;
+}
+
+.cta-button {
+  display: inline-block;
+  background-color: var(--text-accent);
+  color: white;
+  padding: 12px 32px;
+  border-radius: 6px;
+  font-weight: 600;
+  margin: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: none;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--shadow);
+  text-decoration: none;
+  opacity: 1;
+}
+
+/* Lists */
+ul, ol {
+  color: var(--text-primary);
+  padding-left: 20px;
+}
+
+li {
+  margin-bottom: 0.5em;
+}
+
+/* Blog posts */
+.blog-post {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: var(--bg-primary);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  transition: box-shadow 0.3s ease;
+}
+
+.blog-post:hover {
+  box-shadow: 0 4px 16px var(--shadow);
+}
+
+.blog-post h3 {
+  margin-top: 0;
+}
+
+.blog-date {
+  color: var(--text-secondary);
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  body {
+    font-size: 13px;
+  }
+
+  .hero h1 {
+    font-size: 1.8em;
+  }
+
+  .hero .tagline {
+    font-size: 1em;
+  }
+
+  .section {
+    padding: 20px;
+  }
+
+  .section h2 {
+    font-size: 1.4em;
+  }
+
+  .skills {
+    gap: 8px;
+  }
+
+  .skill-tag {
+    font-size: 0.85em;
+    padding: 5px 12px;
+  }
+
+  .cta-button {
+    padding: 10px 24px;
+    font-size: 0.95em;
+    display: block;
+    margin: 10px auto;
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 40px 15px 30px;
+  }
+
+  .hero h1 {
+    font-size: 1.5em;
+  }
+
+  .section {
+    padding: 15px;
+  }
+
+  .wrapper {
+    padding: 10px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background-color: white;
+    color: black;
+  }
+
+  .cta-button {
+    border: 2px solid black;
+  }
+}

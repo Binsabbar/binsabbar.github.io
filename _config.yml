@@ -1,1 +1,30 @@
 theme: jekyll-theme-minimal
+title: Mo | Go & Cloud Native Engineer
+description: Software Engineer specializing in Go development and Cloud Native technologies. Building reliable, scalable systems.
+author: Mo
+url: https://binsabbar.github.io
+github_username: Binsabbar
+
+# SEO and social
+twitter:
+  username:
+  card: summary
+
+social:
+  name: Mo
+  links:
+    - https://github.com/Binsabbar
+
+# Build settings
+markdown: kramdown
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Exclude from processing
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
