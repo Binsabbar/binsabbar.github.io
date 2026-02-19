@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohammed Binsabbar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        :root {
+            --bg:             #F8F4EF;
+            --bg-subtle:      #F0E9E0;
+            --text:           #1C1917;
+            --text-secondary: #78716C;
+            --border:         #E2D8CF;
+            --primary:        #B5763A;
+            --primary-hover:  #9A6030;
+            --primary-light:  #FBF0E4;
+            --primary-text:   #9A6030;
+            --card-bg:        #F0E9E0;
+            --nav-bg:         rgba(248,244,239,0.88);
+            --shadow-hover:   0 12px 32px rgba(181,118,58,0.15);
+        }
+
+        [data-theme='dark'] {
+            --bg:             #110F0D;
+            --bg-subtle:      #1C1815;
+            --text:           #F5EFE8;
+            --text-secondary: #A09288;
+            --border:         #2E2820;
+            --primary:        #C8844A;
+            --primary-hover:  #D4935A;
+            --primary-light:  #261B11;
+            --primary-text:   #C8844A;
+            --card-bg:        #1C1815;
+            --nav-bg:         rgba(17,15,13,0.88);
+            --shadow-hover:   0 12px 32px rgba(0,0,0,0.55);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* ── NAV ───────────────────────────────────────────── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--nav-bg);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: -0.01em;
+        }
+
+        .nav-brand img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid var(--border);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 7px 12px;
+            border-radius: 8px;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--text);
+            background: var(--bg-subtle);
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--primary);
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 6px;
+            transition: background 0.2s;
+        }
+
+        .nav-btn:hover { background: var(--primary-hover); }
+
+        .theme-btn {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            margin-left: 6px;
+        }
+
+        .theme-btn:hover {
+            color: var(--text);
+            border-color: var(--primary);
+        }
+
+        /* ── HERO ──────────────────────────────────────────── */
+        .hero {
+            padding: 80px 24px 88px;
+            text-align: center;
+            animation: fadeUp 0.65s ease both;
+        }
+
+        .hero-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 28px;
+            display: block;
+            border: 3px solid var(--border);
+            box-shadow: 0 0 0 6px var(--primary-light), 0 8px 28px rgba(181,118,58,0.2);
+            transition: box-shadow 0.3s;
+        }
+
+        .hero-logo:hover {
+            box-shadow: 0 0 0 8px var(--primary-light), 0 12px 36px rgba(181,118,58,0.3);
+        }
+
+        [data-theme='dark'] .hero-logo {
+            box-shadow: 0 0 0 6px var(--primary-light), 0 8px 28px rgba(0,0,0,0.5);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary-light);
+            color: var(--primary-text);
+            border: 1px solid rgba(181,118,58,0.3);
+            padding: 7px 16px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+
+        [data-theme='dark'] .hero-badge {
+            border-color: rgba(200,132,74,0.4);
+        }
+
+        .hero h1 {
+            font-size: clamp(38px, 7vw, 68px);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 .accent { color: var(--primary); }
+
+        .hero-sub {
+            font-size: clamp(16px, 2.2vw, 19px);
+            color: var(--text-secondary);
+            max-width: 520px;
+            margin: 0 auto 38px;
+            line-height: 1.65;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            text-decoration: none;
+            padding: 14px 26px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 14px rgba(181,118,58,0.35);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(181,118,58,0.4);
+        }
+
+        
+        .projects {
+            padding: 80px 24px 96px;
+            border-top: 1px solid var(--border);
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(26px, 4vw, 38px);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 10px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+            gap: 18px;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--primary-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+            font-size: 17px;
+            color: var(--primary-text);
+        }
+
+        .project-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            letter-spacing: -0.01em;
+        }
+
+        .project-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.55;
+        }
+
+        .project-card a {
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--primary-text);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: gap 0.2s;
+        }
+
+        .project-card a:hover { gap: 10px; }
+
+        /* ── FOOTER ────────────────────────────────────────── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        .footer-inner {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .social-links a {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 15px;
+            text-decoration: none;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .social-links a:hover {
+            color: var(--text);
+            border-color: var(--primary);
+        }
+
+        footer p {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .project-grid { grid-template-columns: 1fr; }
+            .hero { padding: 64px 20px 56px; }
+            .nav-link { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <img src="assets/images/logo.png" alt="Mohammed Binsabbar">
+                Mohammed Binsabbar
+            </a>
+            <div class="nav-right">
+                <a href="#projects" class="nav-link">Projects</a>
+                <a href="https://github.com/binsabbar" target="_blank" class="nav-btn">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                <button class="theme-btn" id="theme-switcher" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero -->
+        <section class="hero">
+            <img src="assets/images/logo.png" alt="Mohammed Binsabbar" class="hero-logo">
+            <div class="hero-badge">
+                <i class="fas fa-terminal"></i>
+                Platform Engineer &middot; Open Source Enthusiast
+            </div>
+            <h1>
+                Building infrastructure<br>
+                <span class="accent">that never breaks.</span>
+            </h1>
+            <p class="hero-sub">I design scalable platform systems, automate complex workflows, and ship open source tools for teams that demand reliability.</p>
+            <div class="hero-actions">
+                <a href="#projects" class="btn-primary">
+                    Explore Projects <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Projects -->
+        <section class="projects" id="projects">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Selected Projects</h2>
+                    <p>Open source tools I've built and maintain.</p>
+                </div>
+                <div class="project-grid">
+                    <div class="project-card">
+                        <div class="card-icon"><i class="fas fa-cloud"></i></div>
+                        <h3>oracle-cloud-terraform</h3>
+                        <p>A Terraform module for common Oracle Cloud Infrastructure services.</p>
+                        <a href="https://github.com/binsabbar/oracle-cloud-terraform" target="_blank">View on GitHub <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="project-card">
+                        <div class="card-icon"><i class="fas fa-lock"></i></div>
+                        <h3>vault-sync</h3>
+                        <p>A tool to sync secrets from HashiCorp Vault to various destinations.</p>
+                        <a href="https://github.com/binsabbar/vault-sync" target="_blank">View on GitHub <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="project-card">
+                        <div class="card-icon"><i class="fas fa-list-check"></i></div>
+                        <h3>tasklog</h3>
+                        <p>A simple command-line tool for logging tasks and activities.</p>
+                        <a href="https://github.com/binsabbar/tasklog" target="_blank">View on GitHub <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="project-card">
+                        <div class="card-icon"><i class="fas fa-code-branch"></i></div>
+                        <h3>argocd-local</h3>
+                        <p>A local setup for Argo CD for development and testing.</p>
+                        <a href="https://github.com/binsabbar/argocd-local" target="_blank">View on GitHub <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="social-links">
+                <a href="https://github.com/binsabbar" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+            </div>
+            <p>&copy; 2026 Mohammed Binsabbar</p>
+        </div>
+    </footer>
+
+    <script>
+        const btn = document.getElementById('theme-switcher');
+        const icon = btn.querySelector('i');
+        const doc = document.documentElement;
+
+        function applyTheme(theme) {
+            doc.setAttribute('data-theme', theme);
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        const saved = localStorage.getItem('theme');
+        if (saved) applyTheme(saved);
+        else if (window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark');
+
+        btn.addEventListener('click', () => {
+            const next = doc.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', next);
+            applyTheme(next);
+        });
+    </script>
+
+</body>
+</html>
