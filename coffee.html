@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4:6 Brew Calculator — Mohammed Binsabbar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        :root {
+            --bg:             #F8F4EF;
+            --bg-subtle:      #F0E9E0;
+            --text:           #1C1917;
+            --text-secondary: #78716C;
+            --border:         #E2D8CF;
+            --primary:        #B5763A;
+            --primary-hover:  #9A6030;
+            --primary-light:  #FBF0E4;
+            --primary-text:   #9A6030;
+            --nav-bg:         rgba(248,244,239,0.88);
+        }
+        [data-theme='dark'] {
+            --bg:             #110F0D;
+            --bg-subtle:      #1C1815;
+            --text:           #F5EFE8;
+            --text-secondary: #A09288;
+            --border:         #2E2820;
+            --primary:        #C8844A;
+            --primary-hover:  #D4935A;
+            --primary-light:  #261B11;
+            --primary-text:   #C8844A;
+            --nav-bg:         rgba(17,15,13,0.88);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--nav-bg);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: -0.01em;
+        }
+        .nav-brand img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid var(--border);
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 7px 12px;
+            border-radius: 8px;
+            transition: color 0.2s, background 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--text);
+            background: var(--bg-subtle);
+        }
+        .theme-btn {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            margin-left: 6px;
+        }
+        .theme-btn:hover {
+            color: var(--text);
+            border-color: var(--primary);
+        }
+        @media (max-width: 600px) {
+            .nav-link { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <img src="assets/images/logo.png" alt="Mohammed Binsabbar">
+                Mohammed Binsabbar
+            </a>
+            <div class="nav-right">
+                <a href="/" class="nav-link"><i class="fas fa-arrow-left"></i> Back</a>
+                <button class="theme-btn" id="theme-switcher" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const FONT_PAIRS = [
+          { name: "Inter / Playfair",   ui: "'Inter', sans-serif",         display: "'Playfair Display', Georgia, serif",  google: "Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500" },
+          { name: "DM Sans / DM Serif", ui: "'DM Sans', sans-serif",       display: "'DM Serif Display', Georgia, serif",  google: "DM+Sans:wght@300;400;500;600&family=DM+Serif+Display" },
+          { name: "Jost / Cormorant",   ui: "'Jost', sans-serif",          display: "'Cormorant Garamond', Georgia, serif", google: "Jost:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500" },
+          { name: "Nunito / Lora",      ui: "'Nunito', sans-serif",        display: "'Lora', Georgia, serif",              google: "Nunito:wght@300;400;500;600&family=Lora:wght@400;500" },
+          { name: "IBM Plex / Libre",   ui: "'IBM Plex Sans', sans-serif", display: "'Libre Baskerville', Georgia, serif",  google: "IBM+Plex+Sans:wght@300;400;500;600&family=Libre+Baskerville:wght@400" },
+        ];
+        FONT_PAIRS.forEach(f => {
+          const l = document.createElement("link"); l.rel = "stylesheet";
+          l.href = `https://fonts.googleapis.com/css2?family=${f.google}&display=swap`;
+          document.head.appendChild(l);
+        });
+
+        const FLAVOR_OPTIONS = [
+          { label: "More Acidic", ratio: [0.6, 0.4], tag: "Bright & Sharp" },
+          { label: "Balanced",    ratio: [0.5, 0.5], tag: "Classic 4:6"    },
+          { label: "More Sweet",  ratio: [0.4, 0.6], tag: "Smooth & Round" },
+        ];
+        const STRENGTH_OPTIONS = [
+          { label: "Light",    pours: 2, tag: "Clean & Clear" },
+          { label: "Balanced", pours: 3, tag: "The Standard"  },
+          { label: "Strong",   pours: 4, tag: "Full Body"      },
+        ];
+
+        const THEMES = [
+          { name: "Roast",
+            dark:  { bg:"#141210", surface:"#1c1916", surfaceHover:"#222018", border:"#2e2921", text:"#f2ede4", textSub:"#a89880", textMuted:"#6e5f50", textFaint:"#3e3025", accent:"#d4a96a", accentBg:"#2a1f0f", phase1:"#c8954a", phase2:"#4a8ab0", activeBg:"#201a10", activeBar:"#d4a96a", pill:"#2a2520", pillText:"#a89880", green:"#6ab87a" },
+            light: { bg:"#faf7f2", surface:"#f0ead8", surfaceHover:"#e8e0ca", border:"#ddd4be", text:"#1e1810", textSub:"#6b5a40", textMuted:"#9a876a", textFaint:"#c8b898", accent:"#8a5a20", accentBg:"#f5e8d0", phase1:"#8a5a20", phase2:"#205a8a", activeBg:"#f0e4c8", activeBar:"#8a5a20", pill:"#e8e0ca", pillText:"#6b5a40", green:"#3a7a48" } },
+          { name: "Slate",
+            dark:  { bg:"#0d1117", surface:"#161b22", surfaceHover:"#1c2330", border:"#21262d", text:"#e6edf3", textSub:"#8b949e", textMuted:"#484f58", textFaint:"#21262d", accent:"#58a6ff", accentBg:"#0d2136", phase1:"#c8960a", phase2:"#1a6a9a", activeBg:"#131d2e", activeBar:"#58a6ff", pill:"#21262d", pillText:"#8b949e", green:"#3fb950" },
+            light: { bg:"#ffffff", surface:"#f6f8fa", surfaceHover:"#eaeef2", border:"#d0d7de", text:"#1f2328", textSub:"#57606a", textMuted:"#8c959f", textFaint:"#d0d7de", accent:"#0969da", accentBg:"#ddf4ff", phase1:"#7d4e00", phase2:"#0a3069", activeBg:"#ddf4ff", activeBar:"#0969da", pill:"#eaeef2", pillText:"#57606a", green:"#1a7f37" } },
+          { name: "Forest",
+            dark:  { bg:"#0c110e", surface:"#131a14", surfaceHover:"#192018", border:"#1f2b20", text:"#e8f0e8", textSub:"#7a9a7a", textMuted:"#4a6a4a", textFaint:"#243024", accent:"#7ecb6e", accentBg:"#112811", phase1:"#a0b840", phase2:"#40a0b8", activeBg:"#182818", activeBar:"#7ecb6e", pill:"#1f2b20", pillText:"#7a9a7a", green:"#7ecb6e" },
+            light: { bg:"#f4f8f4", surface:"#e8f0e8", surfaceHover:"#dce8dc", border:"#c4d8c4", text:"#142014", textSub:"#3a6a3a", textMuted:"#70a070", textFaint:"#b8d8b8", accent:"#2a6a2a", accentBg:"#d8f0d8", phase1:"#5a6a1a", phase2:"#1a5a6a", activeBg:"#d0ecd0", activeBar:"#2a6a2a", pill:"#dce8dc", pillText:"#3a6a3a", green:"#2a6a2a" } },
+        ];
+
+        const rnd = n => Math.round(n);
+        function calcPours(coffee, ratio, pours, mult) {
+          const total = Math.round(coffee * mult * 10) / 10;
+          const ph1 = total * 0.4, ph2 = total * 0.6;
+          const p1 = rnd(ph1 * ratio[0]), p2 = rnd(ph1 * ratio[1]);
+          const pp = ph2 / pours;
+          const p2s = Array.from({ length: pours }, (_, i) =>
+            i < pours - 1 ? rnd(pp) : rnd(ph2 - rnd(pp) * (pours - 1))
+          );
+          let cum = 0;
+          return { total, schedule: [p1, p2, ...p2s].map((amt, i) => {
+            cum += amt;
+            return { pour: i + 1, amount: amt, time: i * 45, cumulative: cum, phase: i < 2 ? 1 : 2 };
+          })};
+        }
+        const fmt = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
+        const Sun   = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>;
+        const Moon  = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>;
+        const Play  = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>;
+        const Pause = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>;
+        const Stop  = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>;
+        const Skip  = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/></svg>;
+        const Check = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>;
+
+        function App() {
+          const [themeIdx,    setThemeIdx]    = useState(0);
+          const [fontIdx,     setFontIdx]     = useState(0);
+          const [dark,        setDark]        = useState(true);
+          const [coffee,      setCoffee]      = useState(20);
+          const [flavorIdx,   setFlavorIdx]   = useState(1);
+          const [strengthIdx, setStrengthIdx] = useState(1);
+          const [ratioMult,   setRatioMult]   = useState(15);
+          const [customRatio, setCustomRatio] = useState(false);
+          const [timerState,  setTimerState]  = useState("idle");
+          const [elapsed,     setElapsed]     = useState(0);
+          const [activePour,  setActivePour]  = useState(0);
+          const ref = useRef(null);
+
+          const T = THEMES[themeIdx][dark ? "dark" : "light"];
+          const F = FONT_PAIRS[fontIdx];
+          const { schedule, total } = calcPours(coffee, FLAVOR_OPTIONS[flavorIdx].ratio, STRENGTH_OPTIONS[strengthIdx].pours, ratioMult);
+          const isActive = timerState === "running" || timerState === "paused";
+
+          useEffect(() => {
+            if (timerState !== "running") { clearInterval(ref.current); return; }
+            ref.current = setInterval(() => {
+              setElapsed(e => {
+                const n = e + 1;
+                for (let i = schedule.length - 1; i >= 0; i--) { if (n >= schedule[i].time) { setActivePour(i); break; } }
+                if (n >= schedule[schedule.length - 1].time + 45) { setTimerState("done"); setActivePour(null); }
+                return n;
+              });
+            }, 1000);
+            return () => clearInterval(ref.current);
+          }, [timerState, schedule]);
+
+          const doStart  = () => { setElapsed(schedule[activePour]?.time ?? 0); setTimerState("running"); };
+          const doPause  = () => setTimerState("paused");
+          const doResume = () => setTimerState("running");
+          const doStop   = () => { setTimerState("idle"); setElapsed(0); setActivePour(0); };
+          const doSkip   = () => {
+            const n = (activePour ?? 0) + 1;
+            if (n >= schedule.length) { doStop(); return; }
+            setActivePour(n); setElapsed(schedule[n].time);
+            if (!isActive) setTimerState("running");
+          };
+          const doJump = i => { if (isActive) { setActivePour(i); setElapsed(schedule[i].time); } };
+
+          const countdown = timerState === "running" && schedule[activePour + 1]
+            ? schedule[activePour + 1].time - elapsed : null;
+          const progress = Math.min((elapsed / (schedule[schedule.length - 1].time + 45)) * 100, 100);
+
+          const card     = { background: T.surface, borderRadius: "14px", border: `1px solid ${T.border}`, padding: "20px", marginBottom: "8px" };
+          const lbl      = { fontSize: "11px", fontWeight: "600", letterSpacing: "0.08em", textTransform: "uppercase", color: T.textMuted, marginBottom: "14px", display: "block" };
+          const nudgeBtn = { width: "44px", height: "44px", background: T.surfaceHover, border: `1px solid ${T.border}`, color: T.textSub, fontSize: "22px", cursor: "pointer", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, userSelect: "none", fontFamily: "inherit" };
+          const seg      = sel => ({ flex: 1, padding: "12px 8px", borderRadius: "10px", cursor: "pointer", border: `1.5px solid ${sel ? T.accent : T.border}`, background: sel ? T.accentBg : T.surfaceHover, textAlign: "center", transition: "all 0.2s", fontFamily: "inherit" });
+          const primBtn  = { display: "flex", alignItems: "center", gap: "8px", padding: "14px 28px", borderRadius: "12px", background: T.accentBg, border: `1.5px solid ${T.accent}`, color: T.accent, fontSize: "15px", fontWeight: "500", cursor: "pointer", fontFamily: "inherit" };
+          const secBtn   = { display: "flex", alignItems: "center", gap: "6px", padding: "12px 20px", borderRadius: "12px", background: T.surfaceHover, border: `1px solid ${T.border}`, color: T.textSub, fontSize: "14px", cursor: "pointer", fontFamily: "inherit" };
+
+          return (
+            <div style={{ minHeight: "100vh", background: T.bg, color: T.text, fontFamily: F.ui, WebkitFontSmoothing: "antialiased", transition: "background 0.3s, color 0.3s" }}>
+
+              {/* Header */}
+              <div style={{ padding: "22px 16px 18px", borderBottom: `1px solid ${T.border}`, background: T.surface, position: "relative" }}>
+                <div style={{ position: "absolute", top: "18px", right: "12px", display: "flex", gap: "8px", alignItems: "center" }}>
+                  {THEMES.map((th, i) => (
+                    <button key={i} onClick={() => setThemeIdx(i)} style={{ width: "18px", height: "18px", borderRadius: "50%", background: dark ? th.dark.accent : th.light.accent, border: i === themeIdx ? `2.5px solid ${T.text}` : "2px solid transparent", cursor: "pointer", padding: 0, outline: "none", boxSizing: "border-box" }} />
+                  ))}
+                  <div style={{ width: "1px", height: "16px", background: T.border }} />
+                  <select value={fontIdx} onChange={e => setFontIdx(+e.target.value)}
+                    style={{ background: T.surfaceHover, border: `1px solid ${T.border}`, color: T.textSub, fontSize: "11px", padding: "4px 5px", borderRadius: "7px", cursor: "pointer", fontFamily: F.ui, outline: "none", maxWidth: "108px" }}>
+                    {FONT_PAIRS.map((f, i) => <option key={i} value={i}>{f.name}</option>)}
+                  </select>
+                  <div style={{ width: "1px", height: "16px", background: T.border }} />
+                  <button onClick={() => setDark(d => !d)} style={{ width: "32px", height: "32px", borderRadius: "8px", background: "transparent", border: `1px solid ${T.border}`, color: T.textMuted, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {dark ? <Sun /> : <Moon />}
+                  </button>
+                </div>
+                <div style={{ fontSize: "10px", fontWeight: "600", letterSpacing: "0.12em", color: T.textMuted, textTransform: "uppercase", marginBottom: "3px" }}>Tetsu Kasuya</div>
+                <div style={{ fontFamily: F.display, fontSize: "26px", fontWeight: "400", color: T.text, letterSpacing: "-0.5px" }}>4:6 Method</div>
+                <div style={{ fontSize: "12px", color: T.textMuted, marginTop: "2px" }}>V60 Brew Calculator · {THEMES[themeIdx].name}</div>
+              </div>
+
+              <div style={{ maxWidth: "520px", margin: "0 auto", padding: "16px 14px 60px" }}>
+
+                {/* Dose */}
+                <div style={card}>
+                  <span style={lbl}>Coffee Dose</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                    <button style={nudgeBtn} onClick={() => setCoffee(c => Math.round((Math.max(10, c - 0.25)) * 100) / 100)}>−</button>
+                    <div style={{ flex: 1, textAlign: "center" }}>
+                      <span style={{ fontFamily: F.display, fontSize: "60px", fontWeight: "300", color: T.text, letterSpacing: "-3px", lineHeight: 1 }}>
+                        {coffee % 1 === 0 ? coffee.toFixed(0) : coffee.toFixed(2)}
+                      </span>
+                      <span style={{ fontSize: "18px", color: T.textMuted, marginLeft: "5px", fontWeight: "300" }}>g</span>
+                    </div>
+                    <button style={nudgeBtn} onClick={() => setCoffee(c => Math.round((Math.min(40, c + 0.25)) * 100) / 100)}>+</button>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginTop: "12px" }}>
+                    <div style={{ background: T.pill, borderRadius: "20px", padding: "4px 12px", fontSize: "13px", color: T.textSub, fontWeight: "500" }}>
+                      {Number.isInteger(total) ? total : total.toFixed(1)} ml
+                    </div>
+                    <span style={{ color: T.textFaint }}>·</span>
+                    {customRatio ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <span style={{ fontSize: "13px", color: T.textMuted, fontWeight: "500" }}>1:</span>
+                        <input type="number" min="10" max="20" step="0.5" value={ratioMult}
+                          onChange={e => { const v = parseFloat(e.target.value); if (!isNaN(v) && v >= 10 && v <= 20) setRatioMult(v); }}
+                          style={{ width: "50px", padding: "4px 8px", fontSize: "14px", fontWeight: "500", background: T.surfaceHover, border: `1.5px solid ${T.accent}`, color: T.text, borderRadius: "8px", fontFamily: "inherit", textAlign: "center", outline: "none" }} />
+                        <button onClick={() => { setCustomRatio(false); setRatioMult(15); }} style={{ background: "transparent", border: "none", color: T.textMuted, fontSize: "12px", cursor: "pointer", fontFamily: "inherit", textDecoration: "underline" }}>reset</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setCustomRatio(true)} style={{ background: "transparent", border: "none", color: T.textMuted, fontSize: "13px", cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: "3px" }}>
+                        <span style={{ fontWeight: "500" }}>1:{ratioMult}</span>
+                        <span style={{ opacity: 0.5, fontSize: "11px" }}>ratio ›</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Flavor */}
+                <div style={card}>
+                  <span style={lbl}>Phase 1 — Flavor</span>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    {FLAVOR_OPTIONS.map((o, i) => (
+                      <button key={i} onClick={() => setFlavorIdx(i)} style={seg(i === flavorIdx)}>
+                        <span style={{ fontSize: "13px", fontWeight: i === flavorIdx ? "600" : "400", color: i === flavorIdx ? T.accent : T.text, display: "block", marginBottom: "2px" }}>{o.label}</span>
+                        <span style={{ fontSize: "11px", color: i === flavorIdx ? T.accent : T.textMuted, opacity: 0.8 }}>{o.tag}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Strength */}
+                <div style={card}>
+                  <span style={lbl}>Phase 2 — Strength</span>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    {STRENGTH_OPTIONS.map((o, i) => (
+                      <button key={i} onClick={() => setStrengthIdx(i)} style={seg(i === strengthIdx)}>
+                        <span style={{ fontSize: "13px", fontWeight: i === strengthIdx ? "600" : "400", color: i === strengthIdx ? T.accent : T.text, display: "block", marginBottom: "2px" }}>{o.label}</span>
+                        <span style={{ fontSize: "11px", color: i === strengthIdx ? T.accent : T.textMuted, opacity: 0.8 }}>{o.tag}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Timer */}
+                <div style={{ ...card, padding: "22px 20px" }}>
+                  <span style={lbl}>Brew Timer</span>
+                  <div style={{ fontFamily: F.display, fontSize: "76px", fontWeight: "300", color: T.text, letterSpacing: "-5px", lineHeight: 1, textAlign: "center", marginBottom: "8px" }}>{fmt(elapsed)}</div>
+                  <div style={{ height: "3px", background: T.border, borderRadius: "2px", marginBottom: "16px", overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${progress}%`, background: T.accent, borderRadius: "2px", transition: "width 1s linear" }} />
+                  </div>
+                  <div style={{ textAlign: "center", fontSize: "14px", color: T.textMuted, marginBottom: "18px", minHeight: "22px" }}>
+                    {timerState === "done"    && <span style={{ color: T.green, fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}><Check /> Brew complete</span>}
+                    {timerState === "running" && countdown && <span>Next pour in <strong style={{ color: T.accent }}>{countdown}s</strong></span>}
+                    {timerState === "paused"  && <span>Paused</span>}
+                    {timerState === "idle"    && activePour > 0 && <span style={{ color: T.textMuted }}>Starting at pour {activePour + 1} · {fmt(schedule[activePour].time)}</span>}
+                    {timerState === "idle"    && activePour === 0 && <span style={{ color: T.textFaint }}>Ready to brew</span>}
+                  </div>
+                  <div style={{ display: "flex", gap: "10px", justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
+                    {timerState === "idle"    && <button onClick={doStart}  style={primBtn}><Play />{activePour === 0 ? "Start" : `Start at #${activePour + 1}`}</button>}
+                    {timerState === "running" && <><button onClick={doPause}  style={primBtn}><Pause />Pause</button><button onClick={doSkip} style={{ ...secBtn, opacity: activePour >= schedule.length - 1 ? 0.4 : 1 }} disabled={activePour >= schedule.length - 1}><Skip />Skip</button></>}
+                    {timerState === "paused"  && <><button onClick={doResume} style={primBtn}><Play />Resume</button><button onClick={doSkip} style={{ ...secBtn, opacity: activePour >= schedule.length - 1 ? 0.4 : 1 }} disabled={activePour >= schedule.length - 1}><Skip />Skip</button><button onClick={doStop} style={secBtn}><Stop />Reset</button></>}
+                    {timerState === "done"    && <button onClick={doStop}  style={secBtn}><Stop />Reset</button>}
+                  </div>
+                  {isActive && <div style={{ textAlign: "center", marginTop: "10px" }}><button onClick={doStop} style={{ background: "transparent", border: "none", color: T.textFaint, fontSize: "12px", cursor: "pointer", fontFamily: "inherit", textDecoration: "underline" }}>stop & reset</button></div>}
+                </div>
+
+                {/* Schedule */}
+                <div style={card}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+                    <span style={{ ...lbl, marginBottom: 0 }}>Pour Schedule</span>
+                    <span style={{ fontSize: "12px", color: T.textMuted }}>{fmt(schedule[schedule.length - 1].time + 45)}–{fmt(schedule[schedule.length - 1].time + 75)}</span>
+                  </div>
+                  {schedule.map((item, i) => {
+                    const isAct   = isActive && activePour === i;
+                    const isPast  = isActive && i < activePour;
+                    const canJump = isActive && i !== activePour;
+                    return (
+                      <div key={i} onClick={() => canJump && doJump(i)}
+                        style={{ display: "flex", alignItems: "center", gap: "12px", padding: "13px 14px", borderRadius: "10px", background: isAct ? T.activeBg : "transparent", border: `1.5px solid ${isAct ? T.activeBar : "transparent"}`, opacity: isPast ? 0.3 : 1, transition: "all 0.3s", cursor: canJump ? "pointer" : "default", marginBottom: "4px" }}>
+                        <div style={{ width: "32px", height: "32px", borderRadius: "50%", flexShrink: 0, background: isAct ? T.activeBar : T.pill, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: "600", color: isAct ? T.bg : T.pillText, transition: "all 0.25s" }}>
+                          {isPast ? <Check /> : item.pour}
+                        </div>
+                        <div style={{ width: "36px", flexShrink: 0, textAlign: "right" }}>
+                          <span style={{ fontSize: "13px", fontWeight: "500", color: isAct ? T.accent : T.textMuted }}>{fmt(item.time)}</span>
+                        </div>
+                        <div style={{ flex: 1, paddingLeft: "4px" }}>
+                          <div style={{ display: "flex", alignItems: "baseline", gap: "3px" }}>
+                            <span style={{ fontFamily: F.display, fontSize: "26px", fontWeight: "300", color: isAct ? T.accent : T.text, letterSpacing: "-1px", lineHeight: 1 }}>{item.amount}</span>
+                            <span style={{ fontSize: "14px", color: isAct ? T.accent : T.textMuted }}>ml</span>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
+                            <span style={{ fontSize: "11px", fontWeight: "700", color: item.phase === 1 ? T.phase1 : T.phase2, textTransform: "uppercase", letterSpacing: "0.06em" }}>{item.phase === 1 ? "Flavor" : "Strength"}</span>
+                            <span style={{ fontSize: "11px", color: T.textFaint }}>·</span>
+                            <span style={{ fontSize: "12px", color: T.textMuted }}>Total <strong style={{ color: isAct ? T.text : T.textSub, fontWeight: "600" }}>{item.cumulative} ml</strong></span>
+                          </div>
+                        </div>
+                        {isAct   && <div style={{ background: T.accentBg, border: `1px solid ${T.accent}`, color: T.accent, fontSize: "11px", fontWeight: "600", padding: "3px 8px", borderRadius: "6px", animation: "pb 1.5s ease-in-out infinite", flexShrink: 0 }}>NOW</div>}
+                        {canJump && <span style={{ fontSize: "13px", color: T.textFaint }}>›</span>}
+                      </div>
+                    );
+                  })}
+                  {isActive && <div style={{ marginTop: "6px", padding: "7px 12px", borderRadius: "8px", background: T.surfaceHover, textAlign: "center" }}><span style={{ fontSize: "12px", color: T.textMuted }}>Tap a pour row to jump to it</span></div>}
+                </div>
+
+                {/* Notes */}
+                <div style={card}>
+                  <span style={lbl}>Brew Notes</span>
+                  {[["Grind","Coarse — similar to coarse sea salt"],["Temp","92–93°C · 90°C for lighter roasts"],["Filter","Rinse paper filter before brewing"],["Technique","Wait for bed to nearly drain between pours"],["Water","~75ppm TDS for light/Nordic roasts"]].map(([k, v], i, a) => (
+                    <div key={i} style={{ display: "flex", gap: "10px", paddingBottom: i < a.length - 1 ? "10px" : 0, borderBottom: i < a.length - 1 ? `1px solid ${T.border}` : "none", marginBottom: i < a.length - 1 ? "10px" : 0 }}>
+                      <span style={{ fontSize: "12px", fontWeight: "600", color: T.textMuted, width: "70px", flexShrink: 0 }}>{k}</span>
+                      <span style={{ fontSize: "13px", color: T.textSub, lineHeight: "1.5" }}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+              <style>{`@keyframes pb{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(.97)}} button:active{transform:scale(0.97)} input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none} input[type=number]{-moz-appearance:textfield}`}</style>
+            </div>
+          );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+
+    <script>
+        const btn = document.getElementById('theme-switcher');
+        const icon = btn.querySelector('i');
+        const doc = document.documentElement;
+
+        function applyTheme(theme) {
+            doc.setAttribute('data-theme', theme);
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        const saved = localStorage.getItem('theme');
+        if (saved) applyTheme(saved);
+        else if (window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark');
+
+        btn.addEventListener('click', () => {
+            const next = doc.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', next);
+            applyTheme(next);
+        });
+    </script>
+</body>
+</html>
