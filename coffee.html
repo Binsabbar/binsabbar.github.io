@@ -1,448 +1,739 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4:6 Brew Calculator — Mohammed Binsabbar</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <style>
-        :root {
-            --bg:             #F8F4EF;
-            --bg-subtle:      #F0E9E0;
-            --text:           #1C1917;
-            --text-secondary: #78716C;
-            --border:         #E2D8CF;
-            --primary:        #B5763A;
-            --primary-hover:  #9A6030;
-            --primary-light:  #FBF0E4;
-            --primary-text:   #9A6030;
-            --nav-bg:         rgba(248,244,239,0.88);
-        }
-        [data-theme='dark'] {
-            --bg:             #110F0D;
-            --bg-subtle:      #1C1815;
-            --text:           #F5EFE8;
-            --text-secondary: #A09288;
-            --border:         #2E2820;
-            --primary:        #C8844A;
-            --primary-hover:  #D4935A;
-            --primary-light:  #261B11;
-            --primary-text:   #C8844A;
-            --nav-bg:         rgba(17,15,13,0.88);
-        }
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg);
-            transition: background-color 0.3s, color 0.3s;
-        }
-        nav {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: var(--nav-bg);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--border);
-        }
-        .nav-inner {
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 0 24px;
-            height: 62px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 700;
-            font-size: 15px;
-            letter-spacing: -0.01em;
-        }
-        .nav-brand img {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1.5px solid var(--border);
-        }
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .nav-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 7px 12px;
-            border-radius: 8px;
-            transition: color 0.2s, background 0.2s;
-        }
-        .nav-link:hover {
-            color: var(--text);
-            background: var(--bg-subtle);
-        }
-        .theme-btn {
-            background: var(--bg-subtle);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            width: 36px;
-            height: 36px;
-            border-radius: 9px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s, color 0.2s, border-color 0.2s;
-            margin-left: 6px;
-        }
-        .theme-btn:hover {
-            color: var(--text);
-            border-color: var(--primary);
-        }
-        @media (max-width: 600px) {
-            .nav-link { display: none; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4:6 Brew Calculator — Mohammed Binsabbar</title>
+<meta name="description" content="Tetsu Kasuya 4:6 method calculator for V60 pour-over brewing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ── Site tokens ── */
+:root {
+  --bg:           #F8F4EF;
+  --bg-subtle:    #F0E9E0;
+  --text:         #1C1917;
+  --text-sec:     #78716C;
+  --border:       #E2D8CF;
+  --primary:      #B5763A;
+  --primary-r:    181;
+  --primary-g:    118;
+  --primary-b:    58;
+
+  --sep:          rgba(60,60,67,0.10);
+  --sec-label:    rgba(60,60,67,0.62);
+  --ter-label:    rgba(60,60,67,0.38);
+  --quat-label:   rgba(60,60,67,0.20);
+  --glass:        rgba(255,255,255,0.58);
+  --glass-border: rgba(255,255,255,0.60);
+  --glass-hilite: rgba(255,255,255,0.88);
+  --glass-shadow: 0 8px 24px rgba(80,60,40,0.10), 0 1px 0 rgba(255,255,255,0.70) inset;
+  --glass-inner:  rgba(255,255,255,0.45);
+  --glass-sel:    rgba(255,255,255,0.95);
+  --mesh-a:       rgba(200,170,130,0.55);
+  --mesh-b:       rgba(160,180,210,0.40);
+  --mesh-c:       rgba(220,180,160,0.45);
+}
+[data-theme=dark] {
+  --bg:           #110F0D;
+  --bg-subtle:    #1C1815;
+  --text:         #F5EFE8;
+  --text-sec:     #A09288;
+  --border:       #2E2820;
+  --primary:      #C8844A;
+  --primary-r:    200;
+  --primary-g:    132;
+  --primary-b:    74;
+
+  --sep:          rgba(255,255,255,0.08);
+  --sec-label:    rgba(235,235,245,0.65);
+  --ter-label:    rgba(235,235,245,0.38);
+  --quat-label:   rgba(235,235,245,0.20);
+  --glass:        rgba(40,36,32,0.58);
+  --glass-border: rgba(255,255,255,0.10);
+  --glass-hilite: rgba(255,255,255,0.18);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.06) inset;
+  --glass-inner:  rgba(255,255,255,0.07);
+  --glass-sel:    rgba(255,255,255,0.15);
+  --mesh-a:       rgba(120,90,60,0.42);
+  --mesh-b:       rgba(70,90,140,0.28);
+  --mesh-c:       rgba(140,60,90,0.22);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg); color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  transition:background .3s,color .3s;
+  overflow-x:hidden;
+}
+
+/* ── Theme toggle (floating, top-right) ── */
+.theme-btn{
+  position:fixed;top:14px;right:16px;z-index:200;
+  background:var(--glass);border:.5px solid var(--glass-border);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  color:var(--sec-label);width:36px;height:36px;
+  border-radius:50%;cursor:pointer;font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--glass-shadow);
+  transition:all .2s;
+}
+.theme-btn:hover{color:var(--text)}
+
+/* ── Ambient mesh ── */
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{
+  position:absolute;border-radius:50%;
+  width:60vw;height:60vw;max-width:800px;max-height:800px;
+  filter:blur(60px);will-change:transform;
+}
+.blob-a{top:-10%;left:-10%;background:radial-gradient(circle,var(--mesh-a) 0%,transparent 60%);animation:driftA 22s ease-in-out infinite}
+.blob-b{top:30%;right:-15%;background:radial-gradient(circle,var(--mesh-b) 0%,transparent 60%);animation:driftB 28s ease-in-out infinite}
+.blob-c{bottom:-10%;left:20%;background:radial-gradient(circle,var(--mesh-c) 0%,transparent 60%);animation:driftC 25s ease-in-out infinite}
+@keyframes driftA{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(15vw,10vh) scale(1.15)}66%{transform:translate(-5vw,25vh) scale(.9)}}
+@keyframes driftB{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-20vw,15vh) scale(1.2)}}
+@keyframes driftC{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(10vw,-15vh) scale(.85)}70%{transform:translate(-10vw,-5vh) scale(1.1)}}
+.grain{
+  position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.25;
+  mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+[data-theme=dark] .grain{opacity:.4;mix-blend-mode:overlay}
+
+/* ── Main content ── */
+.main{position:relative;z-index:2;max-width:540px;margin:0 auto;padding:28px 14px 80px}
+
+.page-eyebrow{font-size:10px;font-weight:600;color:var(--sec-label);letter-spacing:.12em;text-transform:uppercase;text-align:center;margin-bottom:5px}
+.page-title{font-size:32px;font-weight:700;letter-spacing:-.7px;text-align:center;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--ter-label);text-align:center;margin-bottom:24px}
+
+/* ── Glass card ── */
+.card{
+  background:var(--glass);
+  backdrop-filter:blur(40px) saturate(180%);
+  -webkit-backdrop-filter:blur(40px) saturate(180%);
+  border:1px solid var(--glass-border);
+  box-shadow:var(--glass-shadow);
+  border-radius:20px;
+  position:relative;overflow:hidden;
+  margin-bottom:22px;
+}
+.card::before{/* specular top edge */
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent 0%,var(--glass-hilite) 50%,transparent 100%);
+  pointer-events:none;z-index:3;
+}
+.card::after{/* top sheen */
+  content:'';position:absolute;top:0;left:0;right:0;height:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.22) 0%,transparent 100%);
+  pointer-events:none;z-index:2;
+}
+[data-theme=dark] .card::after{background:linear-gradient(180deg,rgba(255,255,255,.04) 0%,transparent 100%)}
+.card-inner{position:relative;z-index:4}
+
+.section-label{
+  font-size:11px;font-weight:600;color:var(--sec-label);
+  text-transform:uppercase;letter-spacing:.09em;
+  padding:0 18px 8px;display:block;
+}
+
+/* ── Dose ── */
+.dose-wrap{padding:24px 20px 18px}
+.dose-row{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:20px}
+.nudge-btn{
+  width:48px;height:48px;border-radius:50%;
+  border:.5px solid var(--glass-border);
+  background:var(--glass-inner);
+  color:var(--primary);font-size:24px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-family:inherit;font-weight:300;
+  box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 1px 2px rgba(0,0,0,.04);
+  transition:all .15s;flex-shrink:0;
+}
+[data-theme=dark] .nudge-btn{box-shadow:0 1px 0 rgba(255,255,255,.06) inset}
+.nudge-btn:active{transform:scale(.95);opacity:.8}
+.dose-display{flex:1;text-align:center}
+.dose-num{
+  font-size:68px;font-weight:200;color:var(--text);
+  letter-spacing:-3.5px;line-height:1;display:inline-block;
+  text-shadow:0 1px 0 rgba(255,255,255,.55),0 -1px 0 rgba(0,0,0,.04);
+}
+[data-theme=dark] .dose-num{text-shadow:0 1px 0 rgba(255,255,255,.04),0 -1px 0 rgba(0,0,0,.2)}
+.dose-unit{font-size:22px;font-weight:300;color:var(--sec-label);margin-left:4px}
+.dose-meta{display:flex;align-items:center;justify-content:center;gap:10px}
+.water-pill{
+  background:rgba(var(--primary-r),var(--primary-g),var(--primary-b),.16);
+  border:.5px solid rgba(var(--primary-r),var(--primary-g),var(--primary-b),.30);
+  border-radius:100px;padding:5px 14px;
+  font-size:15px;font-weight:600;color:var(--primary);
+  box-shadow:0 0 18px rgba(var(--primary-r),var(--primary-g),var(--primary-b),.12);
+}
+.ratio-btn{
+  background:var(--glass-inner);border:.5px solid var(--glass-border);
+  border-radius:100px;padding:5px 12px;
+  color:var(--sec-label);font-size:13px;cursor:pointer;
+  display:flex;align-items:center;gap:4px;font-family:inherit;
+}
+.ratio-edit{display:flex;align-items:center;gap:6px;background:var(--glass-inner);border:.5px solid var(--glass-border);border-radius:100px;padding:5px 12px}
+.ratio-edit input{
+  width:42px;background:transparent;border:none;
+  border-bottom:1.5px solid var(--primary);
+  color:var(--text);font-size:15px;font-weight:500;font-family:inherit;
+  text-align:center;outline:none;padding:1px 2px;
+}
+.ratio-edit input::-webkit-inner-spin-button,.ratio-edit input::-webkit-outer-spin-button{-webkit-appearance:none}
+.ratio-edit input{-moz-appearance:textfield}
+.ratio-reset-btn{background:none;border:none;color:var(--primary);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+
+/* ── Segmented control ── */
+.seg-wrap{padding:14px 14px 10px}
+.seg{
+  display:flex;border-radius:11px;padding:3px;gap:2px;
+  background:var(--glass-inner);
+  border:.5px solid var(--glass-border);
+  box-shadow:0 1px 2px rgba(0,0,0,.04) inset;
+}
+[data-theme=dark] .seg{box-shadow:0 1px 0 rgba(255,255,255,.04) inset}
+.seg-btn{
+  flex:1;height:30px;border-radius:8px;
+  border:.5px solid transparent;cursor:pointer;
+  background:transparent;color:var(--sec-label);
+  font-size:13px;font-weight:400;font-family:inherit;
+  transition:all .2s cubic-bezier(.4,.2,.2,1);
+}
+.seg-btn.active{
+  background:var(--glass-sel);color:var(--text);font-weight:600;
+  border-color:var(--glass-border);
+  box-shadow:0 1px 3px rgba(0,0,0,.08),0 1px 0 rgba(255,255,255,.9) inset;
+}
+[data-theme=dark] .seg-btn.active{
+  box-shadow:0 1px 2px rgba(0,0,0,.3),0 1px 0 rgba(255,255,255,.08) inset;
+}
+.seg-desc{margin-top:10px;font-size:13px;color:var(--sec-label);text-align:center;padding-bottom:10px}
+
+/* ── Timer ── */
+.timer-wrap{padding:32px 20px 26px;text-align:center}
+.timer-glow{
+  position:absolute;inset:-1px;border-radius:20px;
+  box-shadow:0 0 40px rgba(var(--primary-r),var(--primary-g),var(--primary-b),.2),
+             0 0 80px rgba(var(--primary-r),var(--primary-g),var(--primary-b),.10);
+  pointer-events:none;opacity:0;transition:opacity .4s;z-index:1;
+}
+.timer-glow.on{opacity:1}
+.timer-clock{
+  font-size:94px;font-weight:100;color:var(--text);
+  letter-spacing:-7px;line-height:1;margin-bottom:18px;
+  transition:color .3s;font-variant-numeric:tabular-nums;
+  text-shadow:0 1px 0 rgba(255,255,255,.55);
+}
+[data-theme=dark] .timer-clock{text-shadow:0 1px 0 rgba(255,255,255,.06)}
+.timer-clock.done{color:#30d158;text-shadow:0 0 24px rgba(48,209,88,.4)}
+.timer-clock.active{text-shadow:0 0 30px rgba(var(--primary-r),var(--primary-g),var(--primary-b),.25),0 1px 0 rgba(255,255,255,.55)}
+[data-theme=dark] .timer-clock.active{text-shadow:0 0 30px rgba(var(--primary-r),var(--primary-g),var(--primary-b),.25),0 1px 0 rgba(255,255,255,.06)}
+.progress-track{
+  height:5px;background:var(--glass-inner);
+  border:.5px solid var(--glass-border);
+  border-radius:100px;margin-bottom:18px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(0,0,0,.08) inset;
+}
+.progress-fill{
+  height:100%;width:0%;background:var(--primary);
+  border-radius:100px;transition:width 1s linear;
+  box-shadow:0 0 10px var(--primary);
+}
+.timer-status{font-size:15px;color:var(--sec-label);min-height:22px;margin-bottom:26px}
+.timer-status .accent{color:var(--primary);font-weight:600}
+.timer-status .done-txt{color:#30d158;font-weight:600}
+.timer-status .muted{color:var(--ter-label)}
+.timer-controls{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap}
+.btn-primary{
+  display:flex;align-items:center;gap:9px;
+  background:var(--primary);color:#fff;
+  border:.5px solid rgba(255,255,255,.3);
+  border-radius:100px;padding:0 28px;height:50px;
+  font-size:17px;font-weight:600;cursor:pointer;font-family:inherit;
+  letter-spacing:-.01em;
+  box-shadow:0 6px 20px rgba(var(--primary-r),var(--primary-g),var(--primary-b),.40),
+             0 1px 0 rgba(255,255,255,.3) inset;
+  transition:all .15s;
+}
+.btn-primary:active{opacity:.85;transform:scale(.97)}
+.btn-secondary{
+  display:flex;align-items:center;gap:7px;
+  background:var(--glass-inner);
+  border:.5px solid var(--glass-border);
+  color:var(--sec-label);
+  border-radius:100px;padding:0 20px;height:50px;
+  font-size:15px;font-weight:500;cursor:pointer;font-family:inherit;
+  transition:all .15s;
+}
+.btn-secondary:active{opacity:.8;transform:scale(.97)}
+.btn-secondary:disabled{opacity:.4;cursor:default}
+.btn-ghost{background:none;border:none;color:var(--ter-label);font-size:13px;cursor:pointer;font-family:inherit;margin-top:16px;display:block;width:100%}
+
+/* ── Pour schedule ── */
+.schedule-header{display:flex;justify-content:space-between;align-items:baseline;padding:4px 18px 8px}
+.schedule-header span:first-child{font-size:11px;font-weight:600;color:var(--sec-label);text-transform:uppercase;letter-spacing:.09em}
+.schedule-header span:last-child{font-size:11px;color:var(--ter-label);font-weight:500}
+.pour-row{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;
+  border-bottom:.5px solid var(--sep);
+  cursor:default;transition:all .25s;
+}
+.pour-row:last-child{border-bottom:none}
+.pour-row.active{background:rgba(var(--primary-r),var(--primary-g),var(--primary-b),.12)}
+.pour-row.past{opacity:.35}
+.pour-row.jumpable{cursor:pointer}
+.pour-badge{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:var(--glass-inner);
+  border:.5px solid var(--glass-border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:600;color:var(--sec-label);
+  transition:all .25s;
+}
+.pour-badge.active{
+  background:var(--primary);color:#fff;
+  border-color:rgba(255,255,255,.3);
+  box-shadow:0 0 16px rgba(var(--primary-r),var(--primary-g),var(--primary-b),.5),
+             0 1px 0 rgba(255,255,255,.3) inset;
+}
+.pour-badge.past{background:var(--primary);color:#fff;opacity:.65;border-color:rgba(255,255,255,.2)}
+.pour-time{font-size:13px;font-weight:500;color:var(--ter-label);width:32px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.pour-time.active{color:var(--primary)}
+.pour-body{flex:1}
+.pour-amount{display:flex;align-items:baseline;gap:3px}
+.pour-ml{font-size:30px;font-weight:300;color:var(--text);letter-spacing:-.6px;line-height:1;font-variant-numeric:tabular-nums}
+.pour-ml.active{color:var(--primary)}
+.pour-unit{font-size:15px;font-weight:400;color:var(--sec-label)}
+.pour-unit.active{color:var(--primary)}
+.pour-meta{display:flex;align-items:center;gap:6px;margin-top:3px}
+.phase-chip{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;
+  padding:2px 7px;border-radius:4px;
+}
+.phase-chip.p1{color:#ff9500;background:rgba(255,149,0,.10);border:.5px solid rgba(255,149,0,.20)}
+.phase-chip.p2{color:#5856d6;background:rgba(88,86,214,.10);border:.5px solid rgba(88,86,214,.20)}
+[data-theme=dark] .phase-chip.p1{color:#ff9f0a;background:rgba(255,159,10,.12);border-color:rgba(255,159,10,.25)}
+[data-theme=dark] .phase-chip.p2{color:#5e5ce6;background:rgba(94,92,230,.14);border-color:rgba(94,92,230,.30)}
+.pour-total{font-size:13px;color:var(--sec-label)}
+.pour-total strong{font-weight:500;font-variant-numeric:tabular-nums}
+.now-chip{
+  font-size:10px;font-weight:700;color:var(--primary);letter-spacing:.1em;
+  padding:3px 8px;border-radius:4px;
+  background:rgba(var(--primary-r),var(--primary-g),var(--primary-b),.15);
+  border:.5px solid rgba(var(--primary-r),var(--primary-g),var(--primary-b),.3);
+  animation:nowPulse 1.5s ease-in-out infinite;flex-shrink:0;
+}
+.chevron{color:var(--ter-label);font-size:12px;flex-shrink:0}
+@keyframes nowPulse{0%,100%{opacity:1}50%{opacity:.5}}
+.jump-hint{font-size:12px;color:var(--ter-label);text-align:center;margin-top:-14px;margin-bottom:22px}
+
+/* ── Brew notes ── */
+.note-row{display:flex;gap:0;padding:13px 18px;border-bottom:.5px solid var(--sep)}
+.note-row:last-child{border-bottom:none}
+.note-key{font-size:15px;font-weight:500;color:var(--text);width:92px;flex-shrink:0}
+.note-val{font-size:15px;font-weight:400;color:var(--sec-label);line-height:1.4}
+
+/* ── SVG icons as inline strings via CSS mask or direct use ── */
+</style>
 </head>
 <body>
-    <nav>
-        <div class="nav-inner">
-            <a href="/" class="nav-brand">
-                <img src="assets/images/logo.png" alt="Mohammed Binsabbar">
-                Mohammed Binsabbar
-            </a>
-            <div class="nav-right">
-                <a href="/" class="nav-link"><i class="fas fa-arrow-left"></i> Back</a>
-                <button class="theme-btn" id="theme-switcher" aria-label="Toggle theme">
-                    <i class="fas fa-moon"></i>
-                </button>
-            </div>
+
+<button class="theme-btn" id="theme-btn" aria-label="Toggle theme">
+  <svg id="theme-icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+  <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none"><circle cx="12" cy="12" r="5"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+</button>
+
+<!-- Ambient -->
+<div class="ambient">
+  <div class="blob blob-a"></div>
+  <div class="blob blob-b"></div>
+  <div class="blob blob-c"></div>
+</div>
+<div class="grain"></div>
+
+<!-- Calculator -->
+<div class="main">
+  <div class="page-eyebrow">Tetsu Kasuya</div>
+  <h1 class="page-title">4:6 Method</h1>
+  <div class="page-sub">V60 Brew Calculator</div>
+
+  <!-- Dose -->
+  <span class="section-label">Coffee Dose</span>
+  <div class="card" id="card-dose">
+    <div class="card-inner dose-wrap">
+      <div class="dose-row">
+        <button class="nudge-btn" id="dose-minus">−</button>
+        <div class="dose-display">
+          <span class="dose-num" id="dose-num">20</span><span class="dose-unit">g</span>
         </div>
-    </nav>
+        <button class="nudge-btn" id="dose-plus">+</button>
+      </div>
+      <div class="dose-meta">
+        <div class="water-pill" id="water-pill">300 ml</div>
+        <span style="color:var(--quat-label);font-size:13px">·</span>
+        <button class="ratio-btn" id="ratio-btn">
+          <span id="ratio-label">1 : 15 ratio</span>
+          <span style="color:var(--primary);font-size:12px">›</span>
+        </button>
+        <div class="ratio-edit" id="ratio-edit" style="display:none">
+          <span style="font-size:13px;color:var(--sec-label)">1 :</span>
+          <input type="number" id="ratio-input" min="10" max="20" step="0.5" value="15">
+          <button class="ratio-reset-btn" id="ratio-reset">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <div id="root"></div>
+  <!-- Flavor -->
+  <span class="section-label">Phase 1 — Flavor</span>
+  <div class="card">
+    <div class="card-inner seg-wrap">
+      <div class="seg" id="flavor-seg">
+        <button class="seg-btn" data-idx="0">Acidic</button>
+        <button class="seg-btn active" data-idx="1">Balanced</button>
+        <button class="seg-btn" data-idx="2">Sweet</button>
+      </div>
+      <div class="seg-desc" id="flavor-desc">Classic 4:6</div>
+    </div>
+  </div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+  <!-- Strength -->
+  <span class="section-label">Phase 2 — Strength</span>
+  <div class="card">
+    <div class="card-inner seg-wrap">
+      <div class="seg" id="strength-seg">
+        <button class="seg-btn" data-idx="0">Light</button>
+        <button class="seg-btn active" data-idx="1">Balanced</button>
+        <button class="seg-btn" data-idx="2">Strong</button>
+      </div>
+      <div class="seg-desc" id="strength-desc">The standard</div>
+    </div>
+  </div>
 
-        const FONT_PAIRS = [
-          { name: "Inter / Playfair",   ui: "'Inter', sans-serif",         display: "'Playfair Display', Georgia, serif",  google: "Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500" },
-          { name: "DM Sans / DM Serif", ui: "'DM Sans', sans-serif",       display: "'DM Serif Display', Georgia, serif",  google: "DM+Sans:wght@300;400;500;600&family=DM+Serif+Display" },
-          { name: "Jost / Cormorant",   ui: "'Jost', sans-serif",          display: "'Cormorant Garamond', Georgia, serif", google: "Jost:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500" },
-          { name: "Nunito / Lora",      ui: "'Nunito', sans-serif",        display: "'Lora', Georgia, serif",              google: "Nunito:wght@300;400;500;600&family=Lora:wght@400;500" },
-          { name: "IBM Plex / Libre",   ui: "'IBM Plex Sans', sans-serif", display: "'Libre Baskerville', Georgia, serif",  google: "IBM+Plex+Sans:wght@300;400;500;600&family=Libre+Baskerville:wght@400" },
-        ];
-        FONT_PAIRS.forEach(f => {
-          const l = document.createElement("link"); l.rel = "stylesheet";
-          l.href = `https://fonts.googleapis.com/css2?family=${f.google}&display=swap`;
-          document.head.appendChild(l);
-        });
+  <!-- Timer -->
+  <span class="section-label">Brew Timer</span>
+  <div class="card" id="timer-card">
+    <div class="timer-glow" id="timer-glow"></div>
+    <div class="card-inner timer-wrap">
+      <div class="timer-clock" id="timer-clock">0:00</div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="timer-status" id="timer-status"><span class="muted">Ready to brew</span></div>
+      <div class="timer-controls" id="timer-controls"></div>
+      <button class="btn-ghost" id="stop-reset-btn" style="display:none">Stop &amp; Reset</button>
+    </div>
+  </div>
 
-        const FLAVOR_OPTIONS = [
-          { label: "More Acidic", ratio: [0.6, 0.4], tag: "Bright & Sharp" },
-          { label: "Balanced",    ratio: [0.5, 0.5], tag: "Classic 4:6"    },
-          { label: "More Sweet",  ratio: [0.4, 0.6], tag: "Smooth & Round" },
-        ];
-        const STRENGTH_OPTIONS = [
-          { label: "Light",    pours: 2, tag: "Clean & Clear" },
-          { label: "Balanced", pours: 3, tag: "The Standard"  },
-          { label: "Strong",   pours: 4, tag: "Full Body"      },
-        ];
+  <!-- Schedule -->
+  <div class="schedule-header">
+    <span>Pour Schedule</span>
+    <span id="schedule-times"></span>
+  </div>
+  <div class="card" id="schedule-card">
+    <div class="card-inner" id="schedule-rows"></div>
+  </div>
+  <div class="jump-hint" id="jump-hint" style="display:none">Tap a pour to jump to it</div>
 
-        const THEMES = [
-          { name: "Roast",
-            dark:  { bg:"#141210", surface:"#1c1916", surfaceHover:"#222018", border:"#2e2921", text:"#f2ede4", textSub:"#a89880", textMuted:"#6e5f50", textFaint:"#3e3025", accent:"#d4a96a", accentBg:"#2a1f0f", phase1:"#c8954a", phase2:"#4a8ab0", activeBg:"#201a10", activeBar:"#d4a96a", pill:"#2a2520", pillText:"#a89880", green:"#6ab87a" },
-            light: { bg:"#faf7f2", surface:"#f0ead8", surfaceHover:"#e8e0ca", border:"#ddd4be", text:"#1e1810", textSub:"#6b5a40", textMuted:"#9a876a", textFaint:"#c8b898", accent:"#8a5a20", accentBg:"#f5e8d0", phase1:"#8a5a20", phase2:"#205a8a", activeBg:"#f0e4c8", activeBar:"#8a5a20", pill:"#e8e0ca", pillText:"#6b5a40", green:"#3a7a48" } },
-          { name: "Slate",
-            dark:  { bg:"#0d1117", surface:"#161b22", surfaceHover:"#1c2330", border:"#21262d", text:"#e6edf3", textSub:"#8b949e", textMuted:"#484f58", textFaint:"#21262d", accent:"#58a6ff", accentBg:"#0d2136", phase1:"#c8960a", phase2:"#1a6a9a", activeBg:"#131d2e", activeBar:"#58a6ff", pill:"#21262d", pillText:"#8b949e", green:"#3fb950" },
-            light: { bg:"#ffffff", surface:"#f6f8fa", surfaceHover:"#eaeef2", border:"#d0d7de", text:"#1f2328", textSub:"#57606a", textMuted:"#8c959f", textFaint:"#d0d7de", accent:"#0969da", accentBg:"#ddf4ff", phase1:"#7d4e00", phase2:"#0a3069", activeBg:"#ddf4ff", activeBar:"#0969da", pill:"#eaeef2", pillText:"#57606a", green:"#1a7f37" } },
-          { name: "Forest",
-            dark:  { bg:"#0c110e", surface:"#131a14", surfaceHover:"#192018", border:"#1f2b20", text:"#e8f0e8", textSub:"#7a9a7a", textMuted:"#4a6a4a", textFaint:"#243024", accent:"#7ecb6e", accentBg:"#112811", phase1:"#a0b840", phase2:"#40a0b8", activeBg:"#182818", activeBar:"#7ecb6e", pill:"#1f2b20", pillText:"#7a9a7a", green:"#7ecb6e" },
-            light: { bg:"#f4f8f4", surface:"#e8f0e8", surfaceHover:"#dce8dc", border:"#c4d8c4", text:"#142014", textSub:"#3a6a3a", textMuted:"#70a070", textFaint:"#b8d8b8", accent:"#2a6a2a", accentBg:"#d8f0d8", phase1:"#5a6a1a", phase2:"#1a5a6a", activeBg:"#d0ecd0", activeBar:"#2a6a2a", pill:"#dce8dc", pillText:"#3a6a3a", green:"#2a6a2a" } },
-        ];
+  <!-- Notes -->
+  <span class="section-label">Brew Notes</span>
+  <div class="card">
+    <div class="card-inner">
+      <div class="note-row"><span class="note-key">Grind</span><span class="note-val">Coarse — similar to coarse sea salt</span></div>
+      <div class="note-row"><span class="note-key">Temp</span><span class="note-val">92–93°C · 90°C for lighter roasts</span></div>
+      <div class="note-row"><span class="note-key">Filter</span><span class="note-val">Rinse paper filter before brewing</span></div>
+      <div class="note-row"><span class="note-key">Technique</span><span class="note-val">Wait for bed to nearly drain between pours</span></div>
+      <div class="note-row"><span class="note-key">Water</span><span class="note-val">~75 ppm TDS for light or Nordic roasts</span></div>
+    </div>
+  </div>
+</div>
 
-        const rnd = n => Math.round(n);
-        function calcPours(coffee, ratio, pours, mult) {
-          const total = Math.round(coffee * mult * 10) / 10;
-          const ph1 = total * 0.4, ph2 = total * 0.6;
-          const p1 = rnd(ph1 * ratio[0]), p2 = rnd(ph1 * ratio[1]);
-          const pp = ph2 / pours;
-          const p2s = Array.from({ length: pours }, (_, i) =>
-            i < pours - 1 ? rnd(pp) : rnd(ph2 - rnd(pp) * (pours - 1))
-          );
-          let cum = 0;
-          return { total, schedule: [p1, p2, ...p2s].map((amt, i) => {
-            cum += amt;
-            return { pour: i + 1, amount: amt, time: i * 45, cumulative: cum, phase: i < 2 ? 1 : 2 };
-          })};
-        }
-        const fmt = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+<script>
+// ── Data ──────────────────────────────────────────────────────────
+const FLAVORS   = [
+  { label:"Acidic",   ratio:[.6,.4], desc:"Bright & sharp" },
+  { label:"Balanced", ratio:[.5,.5], desc:"Classic 4:6"    },
+  { label:"Sweet",    ratio:[.4,.6], desc:"Smooth & round" },
+];
+const STRENGTHS = [
+  { label:"Light",    pours:2, desc:"Clean & clear" },
+  { label:"Balanced", pours:3, desc:"The standard"  },
+  { label:"Strong",   pours:4, desc:"Full body"     },
+];
 
-        const Sun   = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>;
-        const Moon  = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>;
-        const Play  = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>;
-        const Pause = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>;
-        const Stop  = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>;
-        const Skip  = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/></svg>;
-        const Check = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>;
+// ── State ─────────────────────────────────────────────────────────
+let coffee      = 20;
+let flavorIdx   = 1;
+let strengthIdx = 1;
+let ratioMult   = 15;
+let customRatio = false;
+let timerState  = "idle";   // idle | running | paused | done
+let elapsed     = 0;
+let activePour  = 0;
+let timerID     = null;
+let schedule    = [];
+let totalWater  = 0;
 
-        function App() {
-          const [themeIdx,    setThemeIdx]    = useState(0);
-          const [fontIdx,     setFontIdx]     = useState(0);
-          const [dark,        setDark]        = useState(true);
-          const [coffee,      setCoffee]      = useState(20);
-          const [flavorIdx,   setFlavorIdx]   = useState(1);
-          const [strengthIdx, setStrengthIdx] = useState(1);
-          const [ratioMult,   setRatioMult]   = useState(15);
-          const [customRatio, setCustomRatio] = useState(false);
-          const [timerState,  setTimerState]  = useState("idle");
-          const [elapsed,     setElapsed]     = useState(0);
-          const [activePour,  setActivePour]  = useState(0);
-          const ref = useRef(null);
+// ── Helpers ───────────────────────────────────────────────────────
+const rnd = n => Math.round(n);
+const fmt = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+const $ = id => document.getElementById(id);
 
-          const T = THEMES[themeIdx][dark ? "dark" : "light"];
-          const F = FONT_PAIRS[fontIdx];
-          const { schedule, total } = calcPours(coffee, FLAVOR_OPTIONS[flavorIdx].ratio, STRENGTH_OPTIONS[strengthIdx].pours, ratioMult);
-          const isActive = timerState === "running" || timerState === "paused";
+function calcSchedule() {
+  const total = Math.round(coffee * ratioMult * 10) / 10;
+  const ph1 = total * .4, ph2 = total * .6;
+  const [r0, r1] = FLAVORS[flavorIdx].ratio;
+  const p1 = rnd(ph1 * r0), p2 = rnd(ph1 * r1);
+  const pours = STRENGTHS[strengthIdx].pours;
+  const pp = ph2 / pours;
+  const p2s = Array.from({length:pours},(_,i) =>
+    i < pours-1 ? rnd(pp) : rnd(ph2 - rnd(pp)*(pours-1))
+  );
+  let cum = 0;
+  totalWater = total;
+  schedule = [p1, p2, ...p2s].map((amt,i) => {
+    cum += amt;
+    return { pour:i+1, amount:amt, time:i*45, cumulative:cum, phase:i<2?1:2 };
+  });
+}
 
-          useEffect(() => {
-            if (timerState !== "running") { clearInterval(ref.current); return; }
-            ref.current = setInterval(() => {
-              setElapsed(e => {
-                const n = e + 1;
-                for (let i = schedule.length - 1; i >= 0; i--) { if (n >= schedule[i].time) { setActivePour(i); break; } }
-                if (n >= schedule[schedule.length - 1].time + 45) { setTimerState("done"); setActivePour(null); }
-                return n;
-              });
-            }, 1000);
-            return () => clearInterval(ref.current);
-          }, [timerState, schedule]);
+// ── SVG icons (inline) ────────────────────────────────────────────
+const SVG = {
+  play:    `<svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M2 1.5C2 0.672 2.896 0.172 3.6 0.6l9.6 5.5c.704.428.704 1.372 0 1.8l-9.6 5.5C2.896 13.828 2 13.328 2 12.5V1.5Z"/></svg>`,
+  pause:   `<svg width="14" height="17" viewBox="0 0 14 17" fill="currentColor"><rect x="0" y="0" width="4.5" height="17" rx="2"/><rect x="9.5" y="0" width="4.5" height="17" rx="2"/></svg>`,
+  stop:    `<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect width="14" height="14" rx="3"/></svg>`,
+  forward: `<svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><path d="M0 1.5C0 .672.896.172 1.6.6L8.8 5.1V1.5C8.8.672 9.696.172 10.4.6l7.2 5.5c.528.348.528 1.152 0 1.8l-7.2 5.5c-.704.428-1.6-.072-1.6-.9V8.9L1.6 13.4C.896 13.828 0 13.328 0 12.5V1.5Z"/></svg>`,
+  check:   `<svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L3.8 7.5L10 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  chevron: `<svg width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 1l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+};
 
-          const doStart  = () => { setElapsed(schedule[activePour]?.time ?? 0); setTimerState("running"); };
-          const doPause  = () => setTimerState("paused");
-          const doResume = () => setTimerState("running");
-          const doStop   = () => { setTimerState("idle"); setElapsed(0); setActivePour(0); };
-          const doSkip   = () => {
-            const n = (activePour ?? 0) + 1;
-            if (n >= schedule.length) { doStop(); return; }
-            setActivePour(n); setElapsed(schedule[n].time);
-            if (!isActive) setTimerState("running");
-          };
-          const doJump = i => { if (isActive) { setActivePour(i); setElapsed(schedule[i].time); } };
+// ── Render dose ───────────────────────────────────────────────────
+function renderDose() {
+  calcSchedule();
+  $("dose-num").textContent = coffee % 1 === 0 ? coffee.toFixed(0) : coffee.toFixed(2);
+  const ts = Number.isInteger(totalWater) ? totalWater : totalWater.toFixed(1);
+  $("water-pill").textContent = ts + " ml";
+  $("ratio-label").textContent = `1 : ${ratioMult} ratio`;
+  $("ratio-input").value = ratioMult;
+  renderSchedule();
+}
 
-          const countdown = timerState === "running" && schedule[activePour + 1]
-            ? schedule[activePour + 1].time - elapsed : null;
-          const progress = Math.min((elapsed / (schedule[schedule.length - 1].time + 45)) * 100, 100);
+// ── Render segmented controls ─────────────────────────────────────
+function renderSeg(segId, descId, data, idx) {
+  $(segId).querySelectorAll(".seg-btn").forEach((btn, i) => {
+    btn.classList.toggle("active", i === idx);
+  });
+  $(descId).textContent = data[idx].desc;
+}
 
-          const card     = { background: T.surface, borderRadius: "14px", border: `1px solid ${T.border}`, padding: "20px", marginBottom: "8px" };
-          const lbl      = { fontSize: "11px", fontWeight: "600", letterSpacing: "0.08em", textTransform: "uppercase", color: T.textMuted, marginBottom: "14px", display: "block" };
-          const nudgeBtn = { width: "44px", height: "44px", background: T.surfaceHover, border: `1px solid ${T.border}`, color: T.textSub, fontSize: "22px", cursor: "pointer", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, userSelect: "none", fontFamily: "inherit" };
-          const seg      = sel => ({ flex: 1, padding: "12px 8px", borderRadius: "10px", cursor: "pointer", border: `1.5px solid ${sel ? T.accent : T.border}`, background: sel ? T.accentBg : T.surfaceHover, textAlign: "center", transition: "all 0.2s", fontFamily: "inherit" });
-          const primBtn  = { display: "flex", alignItems: "center", gap: "8px", padding: "14px 28px", borderRadius: "12px", background: T.accentBg, border: `1.5px solid ${T.accent}`, color: T.accent, fontSize: "15px", fontWeight: "500", cursor: "pointer", fontFamily: "inherit" };
-          const secBtn   = { display: "flex", alignItems: "center", gap: "6px", padding: "12px 20px", borderRadius: "12px", background: T.surfaceHover, border: `1px solid ${T.border}`, color: T.textSub, fontSize: "14px", cursor: "pointer", fontFamily: "inherit" };
+// ── Render schedule ───────────────────────────────────────────────
+function renderSchedule() {
+  calcSchedule();
+  const last = schedule[schedule.length - 1];
+  $("schedule-times").textContent = `${fmt(last.time + 45)} – ${fmt(last.time + 75)}`;
+  const isActive = timerState === "running" || timerState === "paused";
+  const rows = $("schedule-rows");
+  rows.innerHTML = "";
+  schedule.forEach((item, i) => {
+    const isAct  = isActive && activePour === i;
+    const isPast = isActive && i < activePour;
+    const canJump= isActive && i !== activePour;
+    const row = document.createElement("div");
+    row.className = "pour-row" + (isAct?" active":"") + (isPast?" past":"") + (canJump?" jumpable":"");
+    if (canJump) row.addEventListener("click", () => doJump(i));
+    row.innerHTML = `
+      <div class="pour-badge${isAct?" active":isPast?" past":""}">${isPast ? SVG.check : item.pour}</div>
+      <div class="pour-time${isAct?" active":""}">${fmt(item.time)}</div>
+      <div class="pour-body">
+        <div class="pour-amount">
+          <span class="pour-ml${isAct?" active":""}">${item.amount}</span>
+          <span class="pour-unit${isAct?" active":""}">ml</span>
+        </div>
+        <div class="pour-meta">
+          <span class="phase-chip p${item.phase}">${item.phase===1?"Flavor":"Strength"}</span>
+          <span class="pour-total">Total <strong>${item.cumulative} ml</strong></span>
+        </div>
+      </div>
+      ${isAct ? `<div class="now-chip">NOW</div>` : ""}
+      ${canJump ? `<div class="chevron">${SVG.chevron}</div>` : ""}
+    `;
+    rows.appendChild(row);
+  });
+  $("jump-hint").style.display = isActive ? "block" : "none";
+}
 
-          return (
-            <div style={{ minHeight: "100vh", background: T.bg, color: T.text, fontFamily: F.ui, WebkitFontSmoothing: "antialiased", transition: "background 0.3s, color 0.3s" }}>
+// ── Render timer UI ───────────────────────────────────────────────
+function renderTimer() {
+  const isActive = timerState === "running" || timerState === "paused";
+  // clock
+  const clock = $("timer-clock");
+  clock.textContent = fmt(elapsed);
+  clock.className = "timer-clock" + (timerState==="done"?" done":isActive?" active":"");
+  // glow
+  $("timer-glow").className = "timer-glow" + (isActive?" on":"");
+  // progress
+  const last = schedule[schedule.length-1];
+  const pct = Math.min((elapsed / (last.time + 45)) * 100, 100);
+  $("progress-fill").style.width = pct + "%";
+  // status
+  const st = $("timer-status");
+  const countdown = timerState==="running" && schedule[(activePour??0)+1]
+    ? schedule[(activePour??0)+1].time - elapsed : null;
+  if (timerState==="done")
+    st.innerHTML = `<span class="done-txt">Brew complete ✓</span>`;
+  else if (timerState==="running" && countdown)
+    st.innerHTML = `Next pour in <span class="accent">${countdown}s</span>`;
+  else if (timerState==="paused")
+    st.innerHTML = `<span class="muted">Paused</span>`;
+  else if (timerState==="idle" && activePour > 0)
+    st.innerHTML = `Starting at pour ${activePour+1} · <span class="accent">${fmt(schedule[activePour].time)}</span>`;
+  else
+    st.innerHTML = `<span class="muted">Ready to brew</span>`;
+  // controls
+  const ctrl = $("timer-controls");
+  ctrl.innerHTML = "";
+  const mkPrimary = (icon, label, fn) => {
+    const b = document.createElement("button");
+    b.className = "btn-primary";
+    b.innerHTML = icon + label;
+    b.addEventListener("click", fn);
+    return b;
+  };
+  const mkSecondary = (icon, label, fn, disabled=false) => {
+    const b = document.createElement("button");
+    b.className = "btn-secondary";
+    b.innerHTML = icon + label;
+    b.disabled = disabled;
+    if (!disabled) b.addEventListener("click", fn);
+    return b;
+  };
+  if (timerState==="idle") {
+    ctrl.appendChild(mkPrimary(SVG.play, activePour===0?"Start":`Pour ${activePour+1}`, doStart));
+  } else if (timerState==="running") {
+    ctrl.appendChild(mkPrimary(SVG.pause, "Pause", doPause));
+    ctrl.appendChild(mkSecondary(SVG.forward, "Skip", doSkip, activePour >= schedule.length-1));
+  } else if (timerState==="paused") {
+    ctrl.appendChild(mkPrimary(SVG.play, "Resume", doResume));
+    ctrl.appendChild(mkSecondary(SVG.forward, "Skip", doSkip, activePour >= schedule.length-1));
+    ctrl.appendChild(mkSecondary(SVG.stop, "Reset", doStop));
+  } else if (timerState==="done") {
+    ctrl.appendChild(mkSecondary(SVG.stop, "New Brew", doStop));
+  }
+  $("stop-reset-btn").style.display = isActive ? "block" : "none";
+}
 
-              {/* Header */}
-              <div style={{ padding: "22px 16px 18px", borderBottom: `1px solid ${T.border}`, background: T.surface, position: "relative" }}>
-                <div style={{ position: "absolute", top: "18px", right: "12px", display: "flex", gap: "8px", alignItems: "center" }}>
-                  {THEMES.map((th, i) => (
-                    <button key={i} onClick={() => setThemeIdx(i)} style={{ width: "18px", height: "18px", borderRadius: "50%", background: dark ? th.dark.accent : th.light.accent, border: i === themeIdx ? `2.5px solid ${T.text}` : "2px solid transparent", cursor: "pointer", padding: 0, outline: "none", boxSizing: "border-box" }} />
-                  ))}
-                  <div style={{ width: "1px", height: "16px", background: T.border }} />
-                  <select value={fontIdx} onChange={e => setFontIdx(+e.target.value)}
-                    style={{ background: T.surfaceHover, border: `1px solid ${T.border}`, color: T.textSub, fontSize: "11px", padding: "4px 5px", borderRadius: "7px", cursor: "pointer", fontFamily: F.ui, outline: "none", maxWidth: "108px" }}>
-                    {FONT_PAIRS.map((f, i) => <option key={i} value={i}>{f.name}</option>)}
-                  </select>
-                  <div style={{ width: "1px", height: "16px", background: T.border }} />
-                  <button onClick={() => setDark(d => !d)} style={{ width: "32px", height: "32px", borderRadius: "8px", background: "transparent", border: `1px solid ${T.border}`, color: T.textMuted, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {dark ? <Sun /> : <Moon />}
-                  </button>
-                </div>
-                <div style={{ fontSize: "10px", fontWeight: "600", letterSpacing: "0.12em", color: T.textMuted, textTransform: "uppercase", marginBottom: "3px" }}>Tetsu Kasuya</div>
-                <div style={{ fontFamily: F.display, fontSize: "26px", fontWeight: "400", color: T.text, letterSpacing: "-0.5px" }}>4:6 Method</div>
-                <div style={{ fontSize: "12px", color: T.textMuted, marginTop: "2px" }}>V60 Brew Calculator · {THEMES[themeIdx].name}</div>
-              </div>
+// ── Timer actions ─────────────────────────────────────────────────
+function doStart() {
+  elapsed = schedule[activePour]?.time ?? 0;
+  timerState = "running";
+  startTick();
+  render();
+}
+function doPause()  { timerState = "paused";  clearInterval(timerID); render(); }
+function doResume() { timerState = "running"; startTick(); render(); }
+function doStop()   { timerState = "idle"; elapsed = 0; activePour = 0; clearInterval(timerID); render(); }
+function doSkip()   {
+  const n = (activePour ?? 0) + 1;
+  if (n >= schedule.length) { doStop(); return; }
+  activePour = n; elapsed = schedule[n].time;
+  if (timerState !== "running") { timerState = "running"; startTick(); }
+  render();
+}
+function doJump(i) {
+  if (timerState !== "running" && timerState !== "paused") return;
+  activePour = i; elapsed = schedule[i].time;
+  render();
+}
+function startTick() {
+  clearInterval(timerID);
+  timerID = setInterval(() => {
+    elapsed++;
+    const last = schedule[schedule.length-1];
+    for (let i = schedule.length-1; i >= 0; i--) {
+      if (elapsed >= schedule[i].time) { activePour = i; break; }
+    }
+    if (elapsed >= last.time + 45) {
+      timerState = "done"; activePour = null; clearInterval(timerID);
+    }
+    renderTimer();
+    renderSchedule();
+  }, 1000);
+}
 
-              <div style={{ maxWidth: "520px", margin: "0 auto", padding: "16px 14px 60px" }}>
+// ── Full render ───────────────────────────────────────────────────
+function render() {
+  renderDose();
+  renderSeg("flavor-seg",   "flavor-desc",   FLAVORS,   flavorIdx);
+  renderSeg("strength-seg", "strength-desc", STRENGTHS, strengthIdx);
+  renderTimer();
+  renderSchedule();
+}
 
-                {/* Dose */}
-                <div style={card}>
-                  <span style={lbl}>Coffee Dose</span>
-                  <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                    <button style={nudgeBtn} onClick={() => setCoffee(c => Math.round((Math.max(10, c - 0.25)) * 100) / 100)}>−</button>
-                    <div style={{ flex: 1, textAlign: "center" }}>
-                      <span style={{ fontFamily: F.display, fontSize: "60px", fontWeight: "300", color: T.text, letterSpacing: "-3px", lineHeight: 1 }}>
-                        {coffee % 1 === 0 ? coffee.toFixed(0) : coffee.toFixed(2)}
-                      </span>
-                      <span style={{ fontSize: "18px", color: T.textMuted, marginLeft: "5px", fontWeight: "300" }}>g</span>
-                    </div>
-                    <button style={nudgeBtn} onClick={() => setCoffee(c => Math.round((Math.min(40, c + 0.25)) * 100) / 100)}>+</button>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginTop: "12px" }}>
-                    <div style={{ background: T.pill, borderRadius: "20px", padding: "4px 12px", fontSize: "13px", color: T.textSub, fontWeight: "500" }}>
-                      {Number.isInteger(total) ? total : total.toFixed(1)} ml
-                    </div>
-                    <span style={{ color: T.textFaint }}>·</span>
-                    {customRatio ? (
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <span style={{ fontSize: "13px", color: T.textMuted, fontWeight: "500" }}>1:</span>
-                        <input type="number" min="10" max="20" step="0.5" value={ratioMult}
-                          onChange={e => { const v = parseFloat(e.target.value); if (!isNaN(v) && v >= 10 && v <= 20) setRatioMult(v); }}
-                          style={{ width: "50px", padding: "4px 8px", fontSize: "14px", fontWeight: "500", background: T.surfaceHover, border: `1.5px solid ${T.accent}`, color: T.text, borderRadius: "8px", fontFamily: "inherit", textAlign: "center", outline: "none" }} />
-                        <button onClick={() => { setCustomRatio(false); setRatioMult(15); }} style={{ background: "transparent", border: "none", color: T.textMuted, fontSize: "12px", cursor: "pointer", fontFamily: "inherit", textDecoration: "underline" }}>reset</button>
-                      </div>
-                    ) : (
-                      <button onClick={() => setCustomRatio(true)} style={{ background: "transparent", border: "none", color: T.textMuted, fontSize: "13px", cursor: "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", gap: "3px" }}>
-                        <span style={{ fontWeight: "500" }}>1:{ratioMult}</span>
-                        <span style={{ opacity: 0.5, fontSize: "11px" }}>ratio ›</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
+// ── Event wiring ──────────────────────────────────────────────────
+$("dose-minus").addEventListener("click", () => {
+  coffee = Math.round((Math.max(10, coffee - 0.25)) * 100) / 100; render();
+});
+$("dose-plus").addEventListener("click", () => {
+  coffee = Math.round((Math.min(40, coffee + 0.25)) * 100) / 100; render();
+});
 
-                {/* Flavor */}
-                <div style={card}>
-                  <span style={lbl}>Phase 1 — Flavor</span>
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    {FLAVOR_OPTIONS.map((o, i) => (
-                      <button key={i} onClick={() => setFlavorIdx(i)} style={seg(i === flavorIdx)}>
-                        <span style={{ fontSize: "13px", fontWeight: i === flavorIdx ? "600" : "400", color: i === flavorIdx ? T.accent : T.text, display: "block", marginBottom: "2px" }}>{o.label}</span>
-                        <span style={{ fontSize: "11px", color: i === flavorIdx ? T.accent : T.textMuted, opacity: 0.8 }}>{o.tag}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+$("ratio-btn").addEventListener("click", () => {
+  customRatio = true;
+  $("ratio-btn").style.display = "none";
+  $("ratio-edit").style.display = "flex";
+});
+$("ratio-input").addEventListener("input", e => {
+  const v = parseFloat(e.target.value);
+  if (!isNaN(v) && v >= 10 && v <= 20) { ratioMult = v; renderDose(); }
+});
+$("ratio-reset").addEventListener("click", () => {
+  customRatio = false; ratioMult = 15;
+  $("ratio-btn").style.display = "flex";
+  $("ratio-edit").style.display = "none";
+  renderDose();
+});
 
-                {/* Strength */}
-                <div style={card}>
-                  <span style={lbl}>Phase 2 — Strength</span>
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    {STRENGTH_OPTIONS.map((o, i) => (
-                      <button key={i} onClick={() => setStrengthIdx(i)} style={seg(i === strengthIdx)}>
-                        <span style={{ fontSize: "13px", fontWeight: i === strengthIdx ? "600" : "400", color: i === strengthIdx ? T.accent : T.text, display: "block", marginBottom: "2px" }}>{o.label}</span>
-                        <span style={{ fontSize: "11px", color: i === strengthIdx ? T.accent : T.textMuted, opacity: 0.8 }}>{o.tag}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+$("flavor-seg").querySelectorAll(".seg-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    flavorIdx = +btn.dataset.idx;
+    renderSeg("flavor-seg", "flavor-desc", FLAVORS, flavorIdx);
+    renderSchedule();
+  });
+});
+$("strength-seg").querySelectorAll(".seg-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    strengthIdx = +btn.dataset.idx;
+    renderSeg("strength-seg", "strength-desc", STRENGTHS, strengthIdx);
+    renderSchedule();
+  });
+});
 
-                {/* Timer */}
-                <div style={{ ...card, padding: "22px 20px" }}>
-                  <span style={lbl}>Brew Timer</span>
-                  <div style={{ fontFamily: F.display, fontSize: "76px", fontWeight: "300", color: T.text, letterSpacing: "-5px", lineHeight: 1, textAlign: "center", marginBottom: "8px" }}>{fmt(elapsed)}</div>
-                  <div style={{ height: "3px", background: T.border, borderRadius: "2px", marginBottom: "16px", overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: `${progress}%`, background: T.accent, borderRadius: "2px", transition: "width 1s linear" }} />
-                  </div>
-                  <div style={{ textAlign: "center", fontSize: "14px", color: T.textMuted, marginBottom: "18px", minHeight: "22px" }}>
-                    {timerState === "done"    && <span style={{ color: T.green, fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}><Check /> Brew complete</span>}
-                    {timerState === "running" && countdown && <span>Next pour in <strong style={{ color: T.accent }}>{countdown}s</strong></span>}
-                    {timerState === "paused"  && <span>Paused</span>}
-                    {timerState === "idle"    && activePour > 0 && <span style={{ color: T.textMuted }}>Starting at pour {activePour + 1} · {fmt(schedule[activePour].time)}</span>}
-                    {timerState === "idle"    && activePour === 0 && <span style={{ color: T.textFaint }}>Ready to brew</span>}
-                  </div>
-                  <div style={{ display: "flex", gap: "10px", justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
-                    {timerState === "idle"    && <button onClick={doStart}  style={primBtn}><Play />{activePour === 0 ? "Start" : `Start at #${activePour + 1}`}</button>}
-                    {timerState === "running" && <><button onClick={doPause}  style={primBtn}><Pause />Pause</button><button onClick={doSkip} style={{ ...secBtn, opacity: activePour >= schedule.length - 1 ? 0.4 : 1 }} disabled={activePour >= schedule.length - 1}><Skip />Skip</button></>}
-                    {timerState === "paused"  && <><button onClick={doResume} style={primBtn}><Play />Resume</button><button onClick={doSkip} style={{ ...secBtn, opacity: activePour >= schedule.length - 1 ? 0.4 : 1 }} disabled={activePour >= schedule.length - 1}><Skip />Skip</button><button onClick={doStop} style={secBtn}><Stop />Reset</button></>}
-                    {timerState === "done"    && <button onClick={doStop}  style={secBtn}><Stop />Reset</button>}
-                  </div>
-                  {isActive && <div style={{ textAlign: "center", marginTop: "10px" }}><button onClick={doStop} style={{ background: "transparent", border: "none", color: T.textFaint, fontSize: "12px", cursor: "pointer", fontFamily: "inherit", textDecoration: "underline" }}>stop & reset</button></div>}
-                </div>
+$("stop-reset-btn").addEventListener("click", doStop);
 
-                {/* Schedule */}
-                <div style={card}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
-                    <span style={{ ...lbl, marginBottom: 0 }}>Pour Schedule</span>
-                    <span style={{ fontSize: "12px", color: T.textMuted }}>{fmt(schedule[schedule.length - 1].time + 45)}–{fmt(schedule[schedule.length - 1].time + 75)}</span>
-                  </div>
-                  {schedule.map((item, i) => {
-                    const isAct   = isActive && activePour === i;
-                    const isPast  = isActive && i < activePour;
-                    const canJump = isActive && i !== activePour;
-                    return (
-                      <div key={i} onClick={() => canJump && doJump(i)}
-                        style={{ display: "flex", alignItems: "center", gap: "12px", padding: "13px 14px", borderRadius: "10px", background: isAct ? T.activeBg : "transparent", border: `1.5px solid ${isAct ? T.activeBar : "transparent"}`, opacity: isPast ? 0.3 : 1, transition: "all 0.3s", cursor: canJump ? "pointer" : "default", marginBottom: "4px" }}>
-                        <div style={{ width: "32px", height: "32px", borderRadius: "50%", flexShrink: 0, background: isAct ? T.activeBar : T.pill, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: "600", color: isAct ? T.bg : T.pillText, transition: "all 0.25s" }}>
-                          {isPast ? <Check /> : item.pour}
-                        </div>
-                        <div style={{ width: "36px", flexShrink: 0, textAlign: "right" }}>
-                          <span style={{ fontSize: "13px", fontWeight: "500", color: isAct ? T.accent : T.textMuted }}>{fmt(item.time)}</span>
-                        </div>
-                        <div style={{ flex: 1, paddingLeft: "4px" }}>
-                          <div style={{ display: "flex", alignItems: "baseline", gap: "3px" }}>
-                            <span style={{ fontFamily: F.display, fontSize: "26px", fontWeight: "300", color: isAct ? T.accent : T.text, letterSpacing: "-1px", lineHeight: 1 }}>{item.amount}</span>
-                            <span style={{ fontSize: "14px", color: isAct ? T.accent : T.textMuted }}>ml</span>
-                          </div>
-                          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
-                            <span style={{ fontSize: "11px", fontWeight: "700", color: item.phase === 1 ? T.phase1 : T.phase2, textTransform: "uppercase", letterSpacing: "0.06em" }}>{item.phase === 1 ? "Flavor" : "Strength"}</span>
-                            <span style={{ fontSize: "11px", color: T.textFaint }}>·</span>
-                            <span style={{ fontSize: "12px", color: T.textMuted }}>Total <strong style={{ color: isAct ? T.text : T.textSub, fontWeight: "600" }}>{item.cumulative} ml</strong></span>
-                          </div>
-                        </div>
-                        {isAct   && <div style={{ background: T.accentBg, border: `1px solid ${T.accent}`, color: T.accent, fontSize: "11px", fontWeight: "600", padding: "3px 8px", borderRadius: "6px", animation: "pb 1.5s ease-in-out infinite", flexShrink: 0 }}>NOW</div>}
-                        {canJump && <span style={{ fontSize: "13px", color: T.textFaint }}>›</span>}
-                      </div>
-                    );
-                  })}
-                  {isActive && <div style={{ marginTop: "6px", padding: "7px 12px", borderRadius: "8px", background: T.surfaceHover, textAlign: "center" }}><span style={{ fontSize: "12px", color: T.textMuted }}>Tap a pour row to jump to it</span></div>}
-                </div>
+// ── Theme (matches existing site pattern) ─────────────────────────
+const themeBtn  = $("theme-btn");
+function applyTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+  $("theme-icon-moon").style.display = t === "dark" ? "none" : "block";
+  $("theme-icon-sun").style.display  = t === "dark" ? "block" : "none";
+}
+const saved = localStorage.getItem("theme");
+if (saved) applyTheme(saved);
+else if (window.matchMedia("(prefers-color-scheme: dark)").matches) applyTheme("dark");
+themeBtn.addEventListener("click", () => {
+  const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme(next);
+});
 
-                {/* Notes */}
-                <div style={card}>
-                  <span style={lbl}>Brew Notes</span>
-                  {[["Grind","Coarse — similar to coarse sea salt"],["Temp","92–93°C · 90°C for lighter roasts"],["Filter","Rinse paper filter before brewing"],["Technique","Wait for bed to nearly drain between pours"],["Water","~75ppm TDS for light/Nordic roasts"]].map(([k, v], i, a) => (
-                    <div key={i} style={{ display: "flex", gap: "10px", paddingBottom: i < a.length - 1 ? "10px" : 0, borderBottom: i < a.length - 1 ? `1px solid ${T.border}` : "none", marginBottom: i < a.length - 1 ? "10px" : 0 }}>
-                      <span style={{ fontSize: "12px", fontWeight: "600", color: T.textMuted, width: "70px", flexShrink: 0 }}>{k}</span>
-                      <span style={{ fontSize: "13px", color: T.textSub, lineHeight: "1.5" }}>{v}</span>
-                    </div>
-                  ))}
-                </div>
-
-              </div>
-              <style>{`@keyframes pb{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(.97)}} button:active{transform:scale(0.97)} input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none} input[type=number]{-moz-appearance:textfield}`}</style>
-            </div>
-          );
-        }
-
-        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-    </script>
-
-    <script>
-        const btn = document.getElementById('theme-switcher');
-        const icon = btn.querySelector('i');
-        const doc = document.documentElement;
-
-        function applyTheme(theme) {
-            doc.setAttribute('data-theme', theme);
-            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        }
-
-        const saved = localStorage.getItem('theme');
-        if (saved) applyTheme(saved);
-        else if (window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark');
-
-        btn.addEventListener('click', () => {
-            const next = doc.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('theme', next);
-            applyTheme(next);
-        });
-    </script>
+// ── Boot ─────────────────────────────────────────────────────────
+render();
+</script>
 </body>
 </html>
