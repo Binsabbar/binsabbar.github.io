@@ -162,8 +162,22 @@ html,body{
   font-size:68px;font-weight:200;color:var(--text);
   letter-spacing:-3.5px;line-height:1;display:inline-block;
   text-shadow:0 1px 0 rgba(255,255,255,.55),0 -1px 0 rgba(0,0,0,.04);
+  cursor:text;border-bottom:2px solid transparent;
+  transition:border-color .2s;
 }
+.dose-num:hover{border-bottom-color:var(--primary)}
 [data-theme=dark] .dose-num{text-shadow:0 1px 0 rgba(255,255,255,.04),0 -1px 0 rgba(0,0,0,.2)}
+.dose-input{
+  font-size:68px;font-weight:200;color:var(--primary);
+  letter-spacing:-3.5px;line-height:1;
+  background:transparent;border:none;
+  border-bottom:2px solid var(--primary);
+  outline:none;font-family:inherit;
+  width:160px;text-align:center;
+  -moz-appearance:textfield;
+}
+.dose-input::-webkit-inner-spin-button,
+.dose-input::-webkit-outer-spin-button{-webkit-appearance:none}
 .dose-unit{font-size:22px;font-weight:300;color:var(--sec-label);margin-left:4px}
 .dose-meta{display:flex;align-items:center;justify-content:center;gap:10px}
 .water-pill{
@@ -371,8 +385,9 @@ html,body{
     <div class="card-inner dose-wrap">
       <div class="dose-row">
         <button class="nudge-btn" id="dose-minus">−</button>
-        <div class="dose-display">
-          <span class="dose-num" id="dose-num">20</span><span class="dose-unit">g</span>
+        <div class="dose-display" id="dose-display">
+          <span class="dose-num" id="dose-num" title="Tap to edit">20</span><span class="dose-unit" id="dose-unit">g</span>
+          <input class="dose-input" id="dose-input" type="number" min="10" max="60" step="0.25" value="20" style="display:none">
         </div>
         <button class="nudge-btn" id="dose-plus">+</button>
       </div>
@@ -680,8 +695,31 @@ $("dose-minus").addEventListener("click", () => {
   coffee = Math.round((Math.max(10, coffee - 0.25)) * 100) / 100; render();
 });
 $("dose-plus").addEventListener("click", () => {
-  coffee = Math.round((Math.min(40, coffee + 0.25)) * 100) / 100; render();
+  coffee = Math.round((Math.min(60, coffee + 0.25)) * 100) / 100; render();
 });
+
+// Tap dose number → switch to input
+$("dose-num").addEventListener("click", () => {
+  $("dose-num").style.display  = "none";
+  $("dose-unit").style.display = "none";
+  const inp = $("dose-input");
+  inp.value = coffee;
+  inp.style.display = "inline-block";
+  inp.focus();
+  inp.select();
+});
+
+function commitDoseInput() {
+  const inp = $("dose-input");
+  const v = parseFloat(inp.value);
+  if (!isNaN(v) && v >= 1) coffee = Math.round(Math.min(Math.max(v, 1), 60) * 100) / 100;
+  inp.style.display = "none";
+  $("dose-num").style.display  = "inline-block";
+  $("dose-unit").style.display = "inline";
+  render();
+}
+$("dose-input").addEventListener("blur",    commitDoseInput);
+$("dose-input").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); commitDoseInput(); } });
 
 $("ratio-btn").addEventListener("click", () => {
   customRatio = true;
